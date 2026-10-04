@@ -1,9 +1,13 @@
-import { Loader2 } from "lucide-react";
+import { cn } from "@my-better-t-app/ui/lib/utils";
 
-export default function Loader() {
+export default function Loader({ className }: { className?: string }) {
   return (
-    <div className="flex h-full items-center justify-center pt-8">
-      <Loader2 className="animate-spin" />
+    <div role="status" className={cn("flex w-full items-center justify-center py-16", className)}>
+      <span
+        aria-hidden="true"
+        className="size-8 rounded-full border-[3px] border-primary/20 border-t-primary motion-safe:animate-spin"
+      />
+      <span className="sr-only">Se încarcă...</span>
     </div>
   );
 }
