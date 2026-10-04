@@ -1,34 +1,15 @@
 import { cartItems, products } from "@my-better-t-app/db/schema/commerce";
 import type { Product } from "@my-better-t-app/db/schema/commerce";
 import { TRPCError } from "@trpc/server";
-import { and, eq, inArray, isNotNull, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../index";
+import { buildOptimizerItems } from "../lib/cart-offers";
 import { optimizeCart } from "../lib/cart-optimizer";
-import type { OptimizerItem, OptimizerOffer } from "../lib/cart-optimizer";
+import { loadSiblingProducts } from "../lib/siblings";
 
 const quantity = z.number().int().min(1).max(99);
-
-// O ofertă validă: în stoc, cu preț și în aceeași monedă ca restul coșului.
-function toOffers(product: Product, currency: string): OptimizerOffer[] {
-  if (!product.inStock || product.currentPrice === null) {
-    return [];
-  }
-  if (product.currency !== currency) {
-    return [];
-  }
-  return [
-    {
-      productId: product.id,
-      store: product.store,
-      unitPrice: product.currentPrice,
-      title: product.title,
-      url: product.url,
-      imageUrl: product.imageUrl,
-    },
-  ];
-}
 
 export const cartRouter = router({
   // Coșul utilizatorului, cu produsul și totalul în bani.
@@ -45,6 +26,7 @@ export const cartRouter = router({
         url: products.url,
         imageUrl: products.imageUrl,
         ean: products.ean,
+        mpn: products.mpn,
         currency: products.currency,
         currentPrice: products.currentPrice,
       })
@@ -170,34 +152,12 @@ export const cartRouter = router({
         requested.push(product);
       }
 
-      // Aceeași ofertă în alte magazine se recunoaște după EAN.
-      const eans = [
-        ...new Set(requested.flatMap((p) => (p.ean ? [p.ean] : []))),
-      ];
-      const sameEan =
-        eans.length > 0
-          ? await ctx.db
-              .select()
-              .from(products)
-              .where(
-                and(
-                  inArray(products.ean, eans),
-                  eq(products.inStock, true),
-                  isNotNull(products.currentPrice)
-                )
-              )
-          : [];
+      // Aceeași ofertă în alte magazine se recunoaște după EAN sau cod de model (mpn), ca în catalog:
+      // se încarcă și rândurile fără stoc, pentru că pot lega două oferte, apoi se păstrează doar cele în stoc.
+      const rows = await loadSiblingProducts(ctx.db, requested);
 
       const currency = requested[0]?.currency ?? "RON";
-      const items: OptimizerItem[] = requested.map((product) => ({
-        productId: product.id,
-        title: product.title,
-        quantity: quantities.get(product.id) ?? 1,
-        offers: (product.ean
-          ? sameEan.filter((other) => other.ean === product.ean)
-          : [product]
-        ).flatMap((offer) => toOffers(offer, currency)),
-      }));
+      const items = buildOptimizerItems(requested, quantities, rows, currency);
 
       return optimizeCart(items, currency);
     }),

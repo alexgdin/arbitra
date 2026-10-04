@@ -3,6 +3,7 @@ import { buttonVariants } from "@my-better-t-app/ui/components/button";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
 
+import { HeroSearchForm } from "@/components/search/hero-search-form";
 import { BRAND } from "@/lib/brand";
 import { getStore, STORE_IDS } from "@/lib/stores";
 
@@ -86,6 +87,7 @@ export function Hero() {
             Urmărim prețurile din eMAG, PC Garage și Altex și cumpărăm pentru tine când produsul
             ajunge la prețul dorit. Dacă prețul scade în 14 zile, te ajutăm să recuperezi diferența.
           </p>
+          <HeroSearchForm />
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <StartLink />
             <Link

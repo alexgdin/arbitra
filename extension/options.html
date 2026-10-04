@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Setări PretPilot</title>
+    <link rel="stylesheet" href="options.css" />
+    <script type="module" src="options.js"></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <img class="logo" src="icons/icon-48.png" width="40" height="40" alt="" />
+        <div>
+          <h1>Setări PretPilot</h1>
+          <p class="muted">Extensia pentru eMAG, PC Garage și Altex.</p>
+        </div>
+      </header>
+
+      <form id="form" class="card" novalidate>
+        <h2>Conexiune</h2>
+
+        <div class="field">
+          <label for="api-base">Adresa API</label>
+          <input id="api-base" type="url" inputmode="url" autocomplete="off" spellcheck="false" aria-describedby="api-hint api-error" />
+          <p id="api-hint" class="hint">Serverul PretPilot care primește prețurile. Lasă gol pentru valoarea implicită.</p>
+          <p id="api-error" class="field-error" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="web-base">Adresa aplicației web</label>
+          <input id="web-base" type="url" inputmode="url" autocomplete="off" spellcheck="false" aria-describedby="web-hint web-error" />
+          <p id="web-hint" class="hint">Folosită pentru linkurile „Conectează-te”, „Caută produse” și „Panou”. Lasă gol pentru valoarea implicită.</p>
+          <p id="web-error" class="field-error" hidden></p>
+        </div>
+
+        <p class="note">
+          Dacă schimbi adresa API, Chrome îți cere acordul ca extensia să comunice cu acel server.
+          Fără acest acord, extensia nu poate trimite sau citi prețuri de acolo, așa că nu salvăm adresa.
+        </p>
+
+        <div class="actions">
+          <button type="submit" class="btn primary">Salvează</button>
+          <button id="test" type="button" class="btn">Testează conexiunea</button>
+          <button id="reset" type="button" class="btn ghost">Restabilește valorile implicite</button>
+        </div>
+        <p id="result" class="result" role="status" aria-live="polite"></p>
+      </form>
+
+      <section class="card" aria-labelledby="privacy-title">
+        <h2 id="privacy-title">Confidențialitate</h2>
+        <p>
+          Extensia rulează doar pe paginile de produs de pe eMAG, PC Garage și Altex. Când ești conectat la PretPilot,
+          trimite către API doar date publice ale produsului:
+        </p>
+        <ul>
+          <li>magazinul și codul produsului din magazin;</li>
+          <li>titlul, linkul paginii și imaginea produsului;</li>
+          <li>prețul și dacă produsul este în stoc;</li>
+          <li>codul de bare (EAN) și codul modelului, dacă pagina le afișează.</li>
+        </ul>
+        <p>
+          Comparația cu alte magazine trimite doar magazinul și codul produsului și funcționează și fără cont.
+          Cererile către PretPilot folosesc sesiunea ta PretPilot, ca să știm cine contribuie.
+        </p>
+        <p>
+          Nu trimitem nimic altceva: nici istoricul de navigare, nici paginile care nu sunt de produs, nici
+          cookie-urile sau parolele magazinelor.
+        </p>
+        <p><a id="web-link" class="link" target="_blank" rel="noopener noreferrer" hidden>Deschide aplicația PretPilot</a></p>
+      </section>
+    </main>
+  </body>
+</html>

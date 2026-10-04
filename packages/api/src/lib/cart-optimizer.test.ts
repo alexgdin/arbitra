@@ -429,4 +429,48 @@ describe("optimizeCart", () => {
       expectConsistent(result, items);
     });
   });
+
+  describe("limita de magazine", () => {
+    function stores(count: number): Record<string, number> {
+      return Object.fromEntries(
+        Array.from({ length: count }, (_, index) => [`shop${index}`, 1000 + index])
+      );
+    }
+
+    test("rezolvă o problemă cu cel mult 8 magazine distincte", () => {
+      const result = optimizeCart([item("a", 1, stores(8))], "RON");
+
+      expect(result.singleStoreOptions).toHaveLength(8);
+    });
+
+    test("aruncă eroare peste 8 magazine, ca un filtru uitat să nu umfle problema", () => {
+      expect(() => optimizeCart([item("a", 1, stores(9))], "RON")).toThrow(
+        RangeError
+      );
+      expect(() =>
+        optimizeCart(
+          Array.from({ length: 40 }, (_, index) => item(`x${index}`, 1, stores(80))),
+          "RON"
+        )
+      ).toThrow("at most 8 stores");
+    });
+
+    test("numără magazinele tuturor articolelor, nu doar ale unuia", () => {
+      const items = [
+        item("a", 1, stores(5)),
+        item("b", 1, Object.fromEntries(Object.entries(stores(9)).slice(4))),
+      ];
+
+      expect(() => optimizeCart(items, "RON")).toThrow(RangeError);
+    });
+
+    test("nu numără magazinele articolelor fără oferte", () => {
+      const result = optimizeCart(
+        [item("a", 1, { emag: 1000 }), item("b", 1, {})],
+        "RON"
+      );
+
+      expect(result.unavailable.map((u) => u.productId)).toEqual(["b"]);
+    });
+  });
 });

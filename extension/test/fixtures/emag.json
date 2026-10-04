@@ -1,0 +1,39 @@
+{
+  "href": "https://www.emag.ro/solid-state-drive-ssd-western-digital-green-sn3000-nvme-ssd-2tb-wds200t4g0e/pd/DHDY3T3BM/",
+  "ogType": "product",
+  "domPriceText": "1.490,77 Lei",
+  "ldBlocks": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Solid State Drive (SSD)",
+          "item": "https://www.emag.ro/solid-state-drive-ssd/c"
+        }
+      ]
+    },
+    {
+      "@type": "Product",
+      "name": "Solid State Drive (SSD) Western Digital Green SN3000 NVMe SSD, 2TB",
+      "sku": "DHDY3T3BM",
+      "mpn": "WDS200T4G0E",
+      "gtin": "WDS200T4G0E",
+      "brand": "WD",
+      "image": "https://s13emagst.akamaized.net/products/92444/92443593/images/res_1cde77ae7fac3c60da93cd5d891bc2ff.jpg?width=80&amp;height=80&amp;hash=07367DF28B712DF51405D77AFAE7C405",
+      "offers": {
+        "@type": "Offer",
+        "price": "1490.77",
+        "priceCurrency": "RON",
+        "availability": "http://schema.org/InStock",
+        "url": "https://www.emag.ro/solid-state-drive-ssd-western-digital-green-sn3000-nvme-ssd-2tb-wds200t4g0e/pd/DHDY3T3BM/",
+        "seller": "evomag"
+      }
+    },
+    {
+      "@type": "QAPage",
+      "name": "Întrebări și răspunsuri"
+    }
+  ]
+}

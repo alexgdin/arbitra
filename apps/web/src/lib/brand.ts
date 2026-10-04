@@ -1,6 +1,6 @@
 export const BRAND = {
-  name: "PretPilot",
-  tagline: "Plătești mai puțin. Automat.",
+  name: "Arbitrage",
+  tagline: "Același produs. Prețul cel mai mic.",
   description:
-    "PretPilot urmărește prețurile din eMAG, PC Garage și Altex, cumpără automat când produsul ajunge la prețul dorit și te despăgubește dacă prețul scade în 14 zile.",
+    "Arbitrage urmărește prețurile din eMAG, PC Garage și Altex, compară același produs între magazine și te anunță când prețul ajunge la ținta ta.",
 } as const;

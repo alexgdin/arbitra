@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PretPilot</title>
+    <link rel="stylesheet" href="popup.css" />
+    <script type="module" src="popup.js"></script>
+  </head>
+  <body>
+    <main class="popup">
+      <header class="header">
+        <img class="logo" src="icons/icon-32.png" width="24" height="24" alt="" />
+        <h1>PretPilot</h1>
+      </header>
+
+      <p id="loading" class="muted" role="status">Se încarcă…</p>
+
+      <div id="error" class="state" role="alert" hidden>
+        <p>Extensia nu răspunde momentan.</p>
+        <button id="retry" type="button" class="btn">Reîncearcă</button>
+      </div>
+
+      <div id="content" hidden>
+        <section class="card connection" aria-labelledby="connection-title">
+          <span id="avatar" class="avatar" aria-hidden="true"></span>
+          <div class="connection-text">
+            <strong id="connection-title"></strong>
+            <span id="connection-detail" class="muted"></span>
+          </div>
+          <button id="login" type="button" class="btn primary" hidden>Conectează-te</button>
+        </section>
+
+        <section class="card switch-row">
+          <div class="switch-text">
+            <span id="switch-label">Urmărește prețurile pe magazine</span>
+            <span id="switch-hint" class="muted"></span>
+          </div>
+          <button
+            id="switch"
+            type="button"
+            class="switch"
+            role="switch"
+            aria-checked="false"
+            aria-labelledby="switch-label"
+            aria-describedby="switch-hint"
+          ></button>
+        </section>
+
+        <p id="action-error" class="error-text" role="alert" hidden></p>
+
+        <section aria-labelledby="recent-title">
+          <h2 id="recent-title">Ultimele prețuri citite</h2>
+          <ul id="recent-list" class="recent" hidden></ul>
+          <p id="recent-empty" class="muted empty">
+            Deschide o pagină de produs pe eMAG, PC Garage sau Altex.
+          </p>
+        </section>
+      </div>
+
+      <footer class="footer">
+        <a id="link-search" class="link" target="_blank" rel="noopener noreferrer" hidden>Caută produse</a>
+        <a id="link-dashboard" class="link" target="_blank" rel="noopener noreferrer" hidden>Panou</a>
+        <button id="open-settings" type="button" class="link">Setări</button>
+      </footer>
+    </main>
+  </body>
+</html>

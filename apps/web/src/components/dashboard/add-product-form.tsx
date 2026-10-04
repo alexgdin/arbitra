@@ -1,5 +1,7 @@
 "use client";
 
+import { isValidGtin, normalizeModelCode } from "@my-better-t-app/api/lib/identifiers";
+import { isStoreHostname } from "@my-better-t-app/api/lib/store-config";
 import { Button } from "@my-better-t-app/ui/components/button";
 import {
   Card,
@@ -26,31 +28,75 @@ const ADD_PRODUCT_FORM_ID = "adauga-produs";
 const FIELD_ID_PREFIX = "add-product-";
 const DEFAULT_STORE: string = STORE_IDS[0];
 const HTTP_PROTOCOL = /^https?$/;
-const EAN_PATTERN = /^(\d{8,14})?$/;
 const LEADING_WWW = /^www\./;
 const TRAILING_SLASHES = /\/+$/;
+const MAX_EXTERNAL_ID_LENGTH = 128;
 
-const formSchema = z.object({
-  url: z
-    .string()
-    .trim()
-    .pipe(
-      z.url({
-        protocol: HTTP_PROTOCOL,
-        hostname: z.regexes.domain,
-        error: "Introdu un link valid, care începe cu https://",
-      }),
-    ),
-  store: z.string().refine((value) => STORE_IDS.some((id) => id === value), "Alege un magazin."),
-  title: z.string().trim().min(3, "Scrie numele produsului (minimum 3 caractere)."),
-  price: z
-    .string()
-    .refine((value) => parseLeiToBani(value) !== null, "Introdu un preț valid, de exemplu 129,99."),
-  ean: z
-    .string()
-    .trim()
-    .regex(EAN_PATTERN, "Codul EAN are între 8 și 14 cifre."),
-});
+function hostnameOf(url: string): string | undefined {
+  try {
+    return new URL(url.trim()).hostname;
+  } catch {
+    return undefined;
+  }
+}
+
+/** The store whose domain (or a subdomain of it) the link is on, if any. */
+function detectStore(url: string): (typeof STORE_IDS)[number] | undefined {
+  const hostname = hostnameOf(url);
+  return hostname === undefined
+    ? undefined
+    : STORE_IDS.find((id) => isStoreHostname(id, hostname));
+}
+
+// Identificatorii invalizi ar fi ignorați de server după un mesaj de succes, deci se verifică aici.
+const formSchema = z
+  .object({
+    url: z
+      .string()
+      .trim()
+      .pipe(
+        z.url({
+          protocol: HTTP_PROTOCOL,
+          hostname: z.regexes.domain,
+          error: "Introdu un link valid, care începe cu https://",
+        }),
+      ),
+    store: z.string().refine((value) => STORE_IDS.some((id) => id === value), "Alege un magazin."),
+    title: z.string().trim().min(3, "Scrie numele produsului (minimum 3 caractere)."),
+    price: z
+      .string()
+      .refine(
+        (value) => parseLeiToBani(value) !== null,
+        "Introdu un preț valid, de exemplu 129,99.",
+      ),
+    ean: z
+      .string()
+      .trim()
+      .refine(
+        (value) => value === "" || isValidGtin(value),
+        "Cod EAN invalid: verifică cifra de control",
+      ),
+    mpn: z
+      .string()
+      .trim()
+      .refine(
+        (value) => value === "" || normalizeModelCode(value) !== null,
+        "Cod model invalid: scrie codul producătorului, de exemplu WDS200T4G0E.",
+      ),
+  })
+  // Serverul acceptă doar linkuri de pe domeniul magazinului ales. Un link sau un magazin invalid
+  // are deja propria eroare, deci aici nu se mai adaugă una.
+  .refine(
+    ({ url, store }) => {
+      const hostname = hostnameOf(url);
+      const known = STORE_IDS.find((id) => id === store);
+      return hostname === undefined || known === undefined || isStoreHostname(known, hostname);
+    },
+    {
+      path: ["url"],
+      message: "Linkul nu este de pe magazinul ales. Alege magazinul potrivit sau lipește alt link.",
+    },
+  );
 
 /** Scrolls to the form and puts the cursor in its first field. */
 export function focusAddProductForm() {
@@ -58,19 +104,15 @@ export function focusAddProductForm() {
   document.getElementById(`${FIELD_ID_PREFIX}url`)?.focus({ preventScroll: true });
 }
 
-/** The same page always maps to the same product, so adding it twice never duplicates it. */
+/**
+ * The same page always maps to the same product, so adding it twice never duplicates it.
+ * The server accepts at most 128 characters; for a longer address the end is kept, because the
+ * product code that tells two pages apart comes after the long name.
+ */
 function getExternalId(url: string): string {
   const { hostname, pathname } = new URL(url);
-  return `${hostname.replace(LEADING_WWW, "")}${pathname.replace(TRAILING_SLASHES, "")}`;
-}
-
-function detectStore(url: string): string | undefined {
-  try {
-    const { hostname } = new URL(url.trim());
-    return STORE_IDS.find((id) => hostname.includes(id));
-  } catch {
-    return undefined;
-  }
+  const id = `${hostname.replace(LEADING_WWW, "")}${pathname.replace(TRAILING_SLASHES, "")}`;
+  return id.length > MAX_EXTERNAL_ID_LENGTH ? id.slice(-MAX_EXTERNAL_ID_LENGTH) : id;
 }
 
 function getFieldError(field: AnyFieldApi): string | undefined {
@@ -154,7 +196,7 @@ export function AddProductForm({
   const addToCart = useMutation(trpc.cart.add.mutationOptions());
 
   const form = useForm({
-    defaultValues: { url: "", store: DEFAULT_STORE, title: "", price: "", ean: "" },
+    defaultValues: { url: "", store: DEFAULT_STORE, title: "", price: "", ean: "", mpn: "" },
     validationLogic: revalidateLogic({ mode: "blur", modeAfterSubmission: "change" }),
     validators: { onDynamic: formSchema },
     onSubmitInvalid: () => {
@@ -167,18 +209,20 @@ export function AddProductForm({
     },
     onSubmit: async ({ value, formApi }) => {
       const price = parseLeiToBani(value.price);
+      const store = STORE_IDS.find((id) => id === value.store);
       const url = value.url.trim();
-      if (price === null) {
+      if (price === null || store === undefined) {
         return;
       }
       try {
         const { productId } = await ingestPrice.mutateAsync({
-          store: value.store,
+          store,
           externalId: getExternalId(url),
           title: value.title.trim(),
           url,
           price,
           ean: value.ean.trim() || undefined,
+          mpn: value.mpn.trim() || undefined,
         });
         await addToCart.mutateAsync({ productId });
         toast.success("Produsul a fost adăugat în lista ta.");
@@ -312,7 +356,7 @@ export function AddProductForm({
                 field={field}
                 label="Cod EAN"
                 optional
-                hint="Ajută la compararea aceluiași produs între magazine."
+                hint="Codul de bare (8, 12, 13 sau 14 cifre) leagă produsul de același produs din alte magazine."
               >
                 {(control) => (
                   <Input
@@ -322,6 +366,31 @@ export function AddProductForm({
                     maxLength={14}
                     placeholder="ex. 8806095023456"
                     className="tabular-nums"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(event) => field.handleChange(event.target.value)}
+                  />
+                )}
+              </FormField>
+            )}
+          </form.Field>
+
+          <form.Field name="mpn">
+            {(field) => (
+              <FormField
+                field={field}
+                label="Cod model"
+                optional
+                hint="Codul producătorului (de pe pagina produsului) leagă produsul de celelalte magazine, chiar dacă nu are EAN."
+              >
+                {(control) => (
+                  <Input
+                    {...control}
+                    autoComplete="off"
+                    autoCapitalize="characters"
+                    spellCheck={false}
+                    maxLength={128}
+                    placeholder="ex. WDS200T4G0E"
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={(event) => field.handleChange(event.target.value)}

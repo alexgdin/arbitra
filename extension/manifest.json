@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "PretPilot",
+  "version": "0.1.0",
+  "description": "Compară prețul produsului cu eMAG, PC Garage și Altex și ține la zi istoricul de prețuri PretPilot.",
+  "minimum_chrome_version": "110",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://www.emag.ro/*",
+    "https://www.pcgarage.ro/*",
+    "https://altex.ro/*",
+    "https://www.altex.ro/*",
+    "http://localhost:3000/*"
+  ],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.emag.ro/*",
+        "https://www.pcgarage.ro/*",
+        "https://altex.ro/*",
+        "https://www.altex.ro/*"
+      ],
+      "js": ["src/extract.js", "src/overlay.js", "src/content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "PretPilot",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
+}
