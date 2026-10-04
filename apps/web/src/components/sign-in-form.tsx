@@ -1,18 +1,31 @@
 import { Button } from "@my-better-t-app/ui/components/button";
-import { Input } from "@my-better-t-app/ui/components/input";
-import { Label } from "@my-better-t-app/ui/components/label";
-import { useForm } from "@tanstack/react-form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+} from "@my-better-t-app/ui/components/card";
+import { revalidateLogic, useForm } from "@tanstack/react-form";
+import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useRef } from "react";
 import { toast } from "sonner";
 import z from "zod";
 
 import { authClient } from "@/lib/auth-client";
+import { getAuthErrorMessage, NETWORK_ERROR_MESSAGE } from "@/lib/auth-errors";
 
-import Loader from "./loader";
+import { AuthField, focusFirstInvalidField, PasswordField } from "./auth-fields";
+
+const signInSchema = z.object({
+  email: z.string().trim().pipe(z.email("Introdu o adresă de email validă.")),
+  password: z.string().min(1, "Introdu parola."),
+});
 
 export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () => void }) {
   const router = useRouter();
-  const { isPending } = authClient.useSession();
+  const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm({
     defaultValues: {
@@ -20,112 +33,94 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
       password: "",
     },
     onSubmit: async ({ value }) => {
-      await authClient.signIn.email(
-        {
-          email: value.email,
-          password: value.password,
-        },
-        {
-          onSuccess: () => {
-            router.push("/dashboard");
-            toast.success("Sign in successful");
+      try {
+        await authClient.signIn.email(
+          {
+            email: value.email.trim(),
+            password: value.password,
           },
-          onError: (error) => {
-            toast.error(error.error.message || error.error.statusText);
+          {
+            onSuccess: () => {
+              router.push("/dashboard");
+              toast.success("Te-ai conectat cu succes.");
+            },
+            onError: (error) => {
+              toast.error(getAuthErrorMessage(error.error));
+            },
           },
-        },
-      );
+        );
+      } catch {
+        toast.error(NETWORK_ERROR_MESSAGE);
+      }
     },
+    onSubmitInvalid: () => focusFirstInvalidField(formRef.current),
+    validationLogic: revalidateLogic(),
     validators: {
-      onSubmit: z.object({
-        email: z.email("Invalid email address"),
-        password: z.string().min(8, "Password must be at least 8 characters"),
-      }),
+      onDynamic: signInSchema,
     },
   });
 
-  if (isPending) {
-    return <Loader />;
-  }
-
   return (
-    <div className="mx-auto w-full mt-10 max-w-md p-6">
-      <h1 className="mb-6 text-center text-3xl font-bold">Welcome Back</h1>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-        className="space-y-4"
-      >
-        <div>
+    <Card className="shadow-md">
+      <CardHeader>
+        <h1 tabIndex={-1} className="font-semibold text-2xl tracking-tight outline-none">
+          Bine ai revenit
+        </h1>
+        <CardDescription>
+          Conectează-te ca să îți vezi coșul, prețurile țintă și comenzile automate.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form
+          ref={formRef}
+          noValidate
+          onSubmit={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            form.handleSubmit();
+          }}
+          className="grid gap-4"
+        >
           <form.Field name="email">
             {(field) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Email</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="email"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                />
-                {field.state.meta.errors.map((error) => (
-                  <p key={error?.message} className="text-red-500">
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
+              <AuthField
+                field={field}
+                label="Email"
+                type="email"
+                autoComplete="email"
+                placeholder="nume@exemplu.ro"
+              />
             )}
           </form.Field>
-        </div>
 
-        <div>
           <form.Field name="password">
             {(field) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>Password</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  type="password"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                />
-                {field.state.meta.errors.map((error) => (
-                  <p key={error?.message} className="text-red-500">
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
+              <PasswordField field={field} label="Parola" autoComplete="current-password" />
             )}
           </form.Field>
-        </div>
 
-        <form.Subscribe
-          selector={(state) => ({ canSubmit: state.canSubmit, isSubmitting: state.isSubmitting })}
-        >
-          {({ canSubmit, isSubmitting }) => (
-            <Button type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
-              {isSubmitting ? "Submitting..." : "Sign In"}
-            </Button>
-          )}
-        </form.Subscribe>
-      </form>
-
-      <div className="mt-4 text-center">
-        <Button
-          variant="link"
-          onClick={onSwitchToSignUp}
-          className="text-indigo-600 hover:text-indigo-800"
-        >
-          Need an account? Sign Up
+          <form.Subscribe selector={(state) => state.isSubmitting}>
+            {(isSubmitting) => (
+              <Button type="submit" size="lg" className="mt-1 w-full" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <LoaderCircle aria-hidden="true" className="motion-safe:animate-spin" />
+                    Se conectează...
+                  </>
+                ) : (
+                  "Conectează-te"
+                )}
+              </Button>
+            )}
+          </form.Subscribe>
+        </form>
+      </CardContent>
+      <CardFooter className="flex-wrap justify-center gap-x-1 py-2 text-muted-foreground text-sm">
+        Nu ai încă un cont?
+        <Button type="button" variant="link" onClick={onSwitchToSignUp} className="px-1">
+          Creează unul
         </Button>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 }
