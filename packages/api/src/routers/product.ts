@@ -4,7 +4,7 @@ import { and, asc, desc, eq, gte, ilike } from "drizzle-orm";
 import { z } from "zod";
 
 import { protectedProcedure, publicProcedure, router } from "../index";
-import { bani } from "../schemas";
+import { bani, httpUrl } from "../schemas";
 
 const MS_PER_DAY = 86_400_000;
 
@@ -16,8 +16,8 @@ export const productRouter = router({
         store: z.string().min(1),
         externalId: z.string().min(1),
         title: z.string().min(1),
-        url: z.url(),
-        imageUrl: z.url().optional(),
+        url: httpUrl,
+        imageUrl: httpUrl.optional(),
         ean: z.string().min(8).max(14).optional(),
         price: bani,
         currency: z.string().length(3).default("RON"),
