@@ -1,5 +1,6 @@
 "use client";
 
+import { sharesIdentifier } from "@my-better-t-app/api/lib/catalog";
 import { Badge } from "@my-better-t-app/ui/components/badge";
 import { Button } from "@my-better-t-app/ui/components/button";
 import {
@@ -193,9 +194,10 @@ function SearchResults({
       <ul className="space-y-2">
         {products.map((product) => {
           const inCart = cartItems.find((item) => item.productId === product.id);
-          const sameProductInCart =
-            product.ean !== null &&
-            cartItems.some((item) => item.ean === product.ean && item.productId !== product.id);
+          // același EAN sau același cod de model (mpn): magazinele nu expun întotdeauna ambii identificatori
+          const sameProductInCart = cartItems.some(
+            (item) => item.productId !== product.id && sharesIdentifier(item, product),
+          );
           return (
             <ProductRow
               key={product.id}

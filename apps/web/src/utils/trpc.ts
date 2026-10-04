@@ -7,6 +7,7 @@ import { toast } from "sonner";
 const ERROR_MESSAGES: Record<string, string> = {
   UNAUTHORIZED: "Sesiunea a expirat. Autentifică-te din nou.",
   NOT_FOUND: "Nu am găsit ce căutai. Încearcă din nou.",
+  TOO_MANY_REQUESTS: "Prea multe căutări într-un timp scurt. Încearcă din nou peste câteva secunde.",
 };
 
 const FALLBACK_ERROR_MESSAGE =
@@ -40,6 +41,9 @@ const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
       url: `${process.env.NEXT_PUBLIC_SERVER_URL!.replace(/\/$/, "")}/trpc`,
+      // Serverul refuză un apel grupat cu mai mult de MAX_TRPC_BATCH_SIZE proceduri (apps/server/src/rate-limit.ts);
+      // peste această limită clientul trimite apeluri grupate separate, în loc să primească BAD_REQUEST.
+      maxItems: 20,
       fetch(url, options) {
         return fetch(url, {
           ...options,

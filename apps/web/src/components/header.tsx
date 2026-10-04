@@ -12,6 +12,7 @@ import UserMenu from "./user-menu";
 
 const LINKS = [
   { href: "/", label: "Acasă" },
+  { href: "/cauta", label: "Caută" },
   { href: "/dashboard", label: "Panou" },
 ] as const;
 
@@ -49,6 +50,8 @@ export default function Header() {
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "flex h-10 items-center rounded-lg px-3 font-medium text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring sm:h-9",
+                  // pe telefon, logo-ul duce deja acasă, iar trei linkuri nu încap lângă butoane
+                  href === "/" && "max-sm:hidden",
                   active
                     ? "bg-accent text-accent-foreground"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
