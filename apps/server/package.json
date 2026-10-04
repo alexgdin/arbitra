@@ -9,7 +9,9 @@
     "dev": "bun run --hot src/index.ts",
     "start": "bun run dist/index.mjs",
     "env:generate": "varlock codegen",
-    "auth:generate": "varlock run -- bun x auth@latest generate --config src/services.ts --output ../../packages/db/src/schema/auth.ts --yes"
+    "auth:generate": "varlock run -- bun x auth@latest generate --config src/services.ts --output ../../packages/db/src/schema/auth.ts --yes",
+    "db:seed": "bun run src/scripts/seed.ts",
+    "db:seed:reset": "bun run src/scripts/seed.ts --reset"
   },
   "dependencies": {
     "@hono/trpc-server": "^0.4.2",
@@ -18,6 +20,7 @@
     "@my-better-t-app/db": "workspace:*",
     "@trpc/server": "catalog:",
     "better-auth": "catalog:",
+    "drizzle-orm": "catalog:",
     "hono": "^4.13.7",
     "varlock": "catalog:",
     "zod": "catalog:"
