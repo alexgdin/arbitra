@@ -1,0 +1,34 @@
+{
+  "href": "https://www.pcgarage.ro/ssd/wd-sandisk/green-sn3000-1tb-pci-express-40-x4-m2-2280/",
+  "ldBlocks": [
+    {
+      "@type": "WebPage",
+      "name": "SSD WD SanDisk Green SN3000 1TB PCI Express 4.0 x4 M.2 2280"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "SSD",
+          "item": "https://www.pcgarage.ro/ssd/"
+        }
+      ]
+    },
+    {
+      "@type": "Product",
+      "name": "SSD WD SanDisk Green SN3000 1TB PCI Express 4.0 x4 M.2 2280",
+      "sku": "3202727",
+      "mpn": "WDS100T4G0E-00CPS0",
+      "brand": "WD SanDisk",
+      "image": "https://www.pcgarage.ro/images/products/1/6151/3202727/normal/wds200t4g0e-00cps0-211020a99265e913ede088891019f249.jpg",
+      "offers": {
+        "@type": "Offer",
+        "price": 739.99,
+        "priceCurrency": "RON",
+        "availability": "http://schema.org/InStock"
+      }
+    }
+  ]
+}

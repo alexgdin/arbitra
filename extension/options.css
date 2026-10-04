@@ -1,0 +1,225 @@
+/* Aceiași tokeni ca aplicația web (packages/ui/src/styles/globals.css) */
+:root {
+  color-scheme: light dark;
+  --background: oklch(0.984 0.003 248);
+  --foreground: oklch(0.21 0.034 262);
+  --card: oklch(1 0 0);
+  --muted: oklch(0.965 0.008 250);
+  --muted-foreground: oklch(0.5 0.037 257);
+  --primary: oklch(0.527 0.127 165);
+  --primary-foreground: oklch(0.985 0.012 165);
+  --border: oklch(0.915 0.014 252);
+  --input: oklch(0.62 0.025 255);
+  --ring: oklch(0.6 0.13 165);
+  --destructive: oklch(0.55 0.215 27);
+  --success: oklch(0.5 0.12 155);
+  --radius: 0.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.15 0.02 262);
+    --foreground: oklch(0.97 0.006 250);
+    --card: oklch(0.2 0.024 262);
+    --muted: oklch(0.25 0.026 262);
+    --muted-foreground: oklch(0.72 0.03 255);
+    --primary: oklch(0.74 0.16 164);
+    --primary-foreground: oklch(0.2 0.045 166);
+    --border: oklch(0.98 0.01 250 / 11%);
+    --input: oklch(0.55 0.03 258);
+    --ring: oklch(0.72 0.15 165);
+    --destructive: oklch(0.7 0.19 22);
+    --success: oklch(0.76 0.16 158);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+h1,
+h2,
+p,
+ul {
+  margin: 0;
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+h2 {
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  border-radius: 10px;
+}
+
+.muted,
+.hint {
+  color: var(--muted-foreground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 4px);
+  background: var(--card);
+}
+
+.card h2 {
+  margin-bottom: 0;
+}
+
+.card ul {
+  padding-left: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+label {
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--input);
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--background);
+  color: inherit;
+  font: inherit;
+}
+
+input[aria-invalid="true"] {
+  border-color: var(--destructive);
+}
+
+.hint {
+  font-size: 12px;
+}
+
+.field-error {
+  color: var(--destructive);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.note {
+  padding: 10px 12px;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--muted);
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn {
+  padding: 8px 14px;
+  border: 1px solid var(--input);
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--card);
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--muted);
+}
+
+.btn.primary {
+  border-color: transparent;
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.btn.primary:hover {
+  background: var(--primary);
+  filter: brightness(1.08);
+}
+
+.btn.ghost {
+  border-color: transparent;
+  background: none;
+  color: var(--muted-foreground);
+}
+
+.btn.ghost:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+form[aria-busy="true"] .btn {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.result {
+  min-height: 1.5em;
+  font-weight: 600;
+}
+
+.result[data-kind="ok"] {
+  color: var(--success);
+}
+
+.result[data-kind="error"] {
+  color: var(--destructive);
+}
+
+.result[data-kind="info"] {
+  color: var(--muted-foreground);
+}
+
+.link {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+[hidden] {
+  display: none !important;
+}

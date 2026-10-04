@@ -1,0 +1,31 @@
+{
+  "href": "https://altex.ro/solid-state-drive-ssd-western-digital-green-sn3000-2tb-pcie-gen-4-m-2-pcie-wds200t4g0e/cpd/SSDWDS200T4G0E/",
+  "ldBlocks": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "SSD",
+          "item": "https://altex.ro/ssd/cpl/"
+        }
+      ]
+    },
+    {
+      "@type": "Product",
+      "name": "Solid-State Drive (SSD) WESTERN DIGITAL Green SN3000, 2TB, PCIe Gen 4, M.2 PCIe, WDS200T4G0E",
+      "sku": "SSDWDS200T4G0E",
+      "gtin": "718037904610",
+      "brand": "WD",
+      "image": "https://lcdn.altex.ro/media/catalog/product/w/d/wd_green_sn3000_nvme_ssd_01_2c0054a1.jpg",
+      "offers": {
+        "@type": "Offer",
+        "price": 1199.99,
+        "priceCurrency": "RON",
+        "availability": "https://schema.org/InStock",
+        "url": "https://altex.ro/solid-state-drive-ssd-western-digital-green-sn3000-2tb-pcie-gen-4-m-2-pcie-wds200t4g0e/cpd/SSDWDS200T4G0E/"
+      }
+    }
+  ]
+}
