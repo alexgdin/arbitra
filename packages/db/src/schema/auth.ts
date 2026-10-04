@@ -1,5 +1,15 @@
-import { defineRelationsPart } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import { defineRelationsPart} from "drizzle-orm";
+import { pgTable, text, timestamp, boolean, index, integer, jsonb } from "drizzle-orm/pg-core";
+
+export type ShippingAddress = {
+  name: string;
+  phone: string;
+  street: string;
+  city: string;
+  county: string;
+  postalCode: string;
+  country: string;
+};
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -12,6 +22,12 @@ export const user = pgTable("user", {
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
+
+  brokerEnabled: boolean("broker_enabled").notNull().default(false),
+  brokerMaxOrderValue: integer("broker_max_order_value"), // plafon/comandă, în bani
+  brokerMonthlyBudget: integer("broker_monthly_budget"), // buget lunar, în bani
+  brokerPaymentMethodRef: text("broker_payment_method_ref"), // doar token de la furnizor, niciodată date de card
+  shippingAddress: jsonb("shipping_address").$type<ShippingAddress>(),
 });
 
 export const session = pgTable(

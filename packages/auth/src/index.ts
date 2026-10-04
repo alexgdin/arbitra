@@ -30,6 +30,14 @@ export function createAuth(
         httpOnly: true,
       },
     },
+
+    user: {
+  additionalFields: {
+    brokerEnabled: { type: "boolean", required: false, defaultValue: false, input: false },
+    brokerMaxOrderValue: { type: "number", required: false, input: false },
+    brokerMonthlyBudget: { type: "number", required: false, input: false },
+  },
+},
     plugins: [],
   });
 }
