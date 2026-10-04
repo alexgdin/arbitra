@@ -47,7 +47,11 @@ export const products = pgTable(
     store: text("store").notNull(), // "emag" | "pcgarage" | "altex" | ...
     externalId: text("external_id").notNull(), // SKU / id din magazin
     ean: text("ean"), // leagă aceeași ofertă între magazine
+    mpn: text("mpn"), // codul de model al producătorului, normalizat (litere mari, fără separatori)
     title: text("title").notNull(),
+    // Titlul și EAN-ul normalizate (fără diacritice, litere mici) pentru căutarea publică.
+    // Pentru cataloage mari, calea de upgrade este un index GIN pg_trgm pe această coloană.
+    searchText: text("search_text").notNull().default(""),
     url: text("url").notNull(),
     imageUrl: text("image_url"),
     currency: text("currency").notNull().default("RON"),
@@ -63,6 +67,7 @@ export const products = pgTable(
   (t) => [
     uniqueIndex("products_store_external_id_uq").on(t.store, t.externalId),
     index("products_ean_idx").on(t.ean),
+    index("products_mpn_idx").on(t.mpn),
   ]
 );
 

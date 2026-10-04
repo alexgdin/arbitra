@@ -12,6 +12,8 @@
 //
 // Tot ce creează scriptul se recunoaște după: produse cu externalId "demo-*" și userul DEMO_EMAIL.
 
+import { canonicalGtin, isValidGtin } from "@my-better-t-app/api/lib/identifiers";
+import { buildProductSearchText } from "@my-better-t-app/api/lib/search";
 import type { ShippingAddress } from "@my-better-t-app/db/schema/auth";
 import { user } from "@my-better-t-app/db/schema/auth";
 import type { NewProduct, Order } from "@my-better-t-app/db/schema/commerce";
@@ -55,7 +57,7 @@ type Offer = {
 
 type CatalogItem = { ean: string; offers: Record<Store, Offer> };
 
-// Același EAN în toate cele 3 magazine, ca optimizarea coșului să aibă alternative reale.
+// Același EAN (GTIN-13 valid) în toate cele 3 magazine, ca optimizarea coșului să aibă alternative reale.
 // Numărul din externalId e poziția produsului în listă (1-9): "demo-<magazin>-<n>".
 const CATALOG: CatalogItem[] = [
   {
@@ -79,7 +81,7 @@ const CATALOG: CatalogItem[] = [
     },
   },
   {
-    ean: "8806095347128",
+    ean: "8806095347127",
     offers: {
       emag: {
         title: "Telefon mobil Samsung Galaxy S24, Dual SIM, 8GB RAM, 128GB, 5G, Onyx Black",
@@ -99,7 +101,7 @@ const CATALOG: CatalogItem[] = [
     },
   },
   {
-    ean: "0196802948176",
+    ean: "0196802948173",
     offers: {
       emag: {
         title: "Laptop Lenovo IdeaPad Slim 5 16 inch, AMD Ryzen 7 7730U, 16GB, 512GB SSD, Cloud Grey",
@@ -118,7 +120,7 @@ const CATALOG: CatalogItem[] = [
     },
   },
   {
-    ean: "8806091052845",
+    ean: "8806091052841",
     offers: {
       emag: {
         title: "Monitor Gaming LG UltraGear 27GP850-B, 27 inch, QHD, Nano IPS, 165Hz, 1ms",
@@ -156,7 +158,7 @@ const CATALOG: CatalogItem[] = [
     },
   },
   {
-    ean: "6942345600013",
+    ean: "6942345600016",
     offers: {
       emag: {
         title: "Tastatură mecanică wireless Keychron K2 V2, layout 75%, Gateron Brown, RGB",
@@ -175,7 +177,7 @@ const CATALOG: CatalogItem[] = [
     },
   },
   {
-    ean: "8806094215372",
+    ean: "8806094215373",
     offers: {
       emag: {
         title: "SSD Samsung 990 PRO, 1TB, M.2 2280, PCIe Gen4 x4 NVMe",
@@ -195,7 +197,7 @@ const CATALOG: CatalogItem[] = [
     },
   },
   {
-    ean: "6970995783251",
+    ean: "6970995783254",
     offers: {
       emag: {
         title: "Aspirator robot Roborock Q7, funcție mop, 4200 Pa, navigare LiDAR, Negru",
@@ -234,6 +236,13 @@ const CATALOG: CatalogItem[] = [
     },
   },
 ];
+
+// Un EAN demo invalid ar fi ignorat de API, iar produsele nu s-ar mai lega între magazine.
+for (const { ean } of CATALOG) {
+  if (!isValidGtin(ean)) {
+    throw new Error(`Demo EAN ${ean} is not a valid GTIN`);
+  }
+}
 
 type CartSpec = {
   externalId: string;
@@ -426,6 +435,8 @@ export function buildDemoRows(now: number): DemoRow[] {
       const number = index + 1;
       const externalId = `${DEMO_PREFIX}${store}-${number}`;
       const history = buildHistory(externalId, offer, now);
+      // forma canonică, ca la ingestie: un EAN care începe cu 0 se salvează fără zeroul din față
+      const ean = canonicalGtin(item.ean);
 
       return {
         externalId,
@@ -433,8 +444,9 @@ export function buildDemoRows(now: number): DemoRow[] {
         product: {
           store,
           externalId,
-          ean: item.ean,
+          ean,
           title: offer.title,
+          searchText: buildProductSearchText(offer.title, ean),
           url: PRODUCT_URLS[store](slugify(offer.title), number),
           imageUrl: null,
           currency: "RON",
@@ -569,6 +581,7 @@ async function seedDemoData(now: number) {
         set: {
           ean: excluded("ean"),
           title: excluded("title"),
+          searchText: excluded("search_text"),
           url: excluded("url"),
           imageUrl: excluded("image_url"),
           currency: excluded("currency"),

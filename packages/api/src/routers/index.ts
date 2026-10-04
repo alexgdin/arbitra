@@ -1,6 +1,7 @@
 import { protectedProcedure, publicProcedure, router } from "../index";
 import { brokerRouter } from "./broker";
 import { cartRouter } from "./cart";
+import { catalogRouter } from "./catalog";
 import { productRouter } from "./product";
 
 export const appRouter = router({
@@ -14,6 +15,7 @@ export const appRouter = router({
     };
   }),
   product: productRouter,
+  catalog: catalogRouter,
   broker: brokerRouter,
   cart: cartRouter,
 });

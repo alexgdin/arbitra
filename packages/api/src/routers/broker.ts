@@ -5,7 +5,7 @@ import { and, eq, isNotNull } from "drizzle-orm";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../index";
-import { bani } from "../schemas";
+import { bani, brokerBani } from "../schemas";
 
 const shippingAddressSchema = z.object({
   name: z.string().min(1),
@@ -52,8 +52,8 @@ export const brokerRouter = router({
       z
         .object({
           enabled: z.boolean().optional(),
-          maxOrderValue: bani.nullable().optional(),
-          monthlyBudget: bani.nullable().optional(),
+          maxOrderValue: brokerBani.nullable().optional(),
+          monthlyBudget: brokerBani.nullable().optional(),
           paymentMethodRef: z.string().min(1).nullable().optional(),
           shippingAddress: shippingAddressSchema.nullable().optional(),
         })

@@ -75,6 +75,9 @@ export type OptimizeOptions = {
 
 const MAX_EXHAUSTIVE_ITEMS = 12;
 const DEFAULT_NODE_LIMIT = 2_000_000;
+// Numărul de magazine din problemă crește căutarea și memoria. Apelantul trimite doar magazinele cunoscute
+// (3 acum), deci peste această limită înseamnă un filtru uitat: se aruncă eroare, nu se rezolvă problema.
+const MAX_STORES = 8;
 
 type Problem = {
   // Alfabetic: indicele unui magazin rezolvă egalitățile în mod determinist.
@@ -163,6 +166,11 @@ function buildProblem(items: readonly OptimizerItem[]): {
   const stores = [
     ...new Set(available.flatMap(({ byStore }) => [...byStore.keys()])),
   ].toSorted(compareText);
+  if (stores.length > MAX_STORES) {
+    throw new RangeError(
+      `Cart optimization supports at most ${MAX_STORES} stores, got ${stores.length}`
+    );
+  }
 
   const offers = available.map(({ byStore }) =>
     stores.map((store) => byStore.get(store))
