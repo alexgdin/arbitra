@@ -24,6 +24,10 @@ function isNeonUrl(url: string): boolean {
 export function createDb(env: DatabaseConfig): Database {
   if (isNeonUrl(env.DATABASE_URL)) {
     const pool = new Pool({ connectionString: env.DATABASE_URL });
+    // O conexiune inactivă închisă de Neon (sau de suspendarea unei funcții serverless) nu trebuie să oprească procesul.
+    pool.on("error", (error: Error) => {
+      console.error("Neon pool error:", error.message);
+    });
     // Ambele drivere expun același API Drizzle pentru Postgres (select, insert, transaction, query).
     return drizzleNeon({ client: pool, relations }) as unknown as Database;
   }
