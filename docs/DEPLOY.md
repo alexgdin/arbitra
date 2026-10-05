@@ -9,14 +9,14 @@ Arbitra se publică în **două proiecte Vercel** din același repo GitHub:
 
 Browserul vorbește **doar cu domeniul site-ului**: `apps/web/next.config.ts` trimite `/trpc/*` și `/api/auth/*` către API prin rewrites (când `API_ORIGIN` e setat). Așa cookie-urile de autentificare sunt first-party, iar login-ul merge și în Safari/iOS și în verificarea sesiunii din `/dashboard`. Fără rewrites, cu site-ul și API-ul pe două domenii `*.vercel.app`, login-ul nu ar funcționa.
 
-Ambele proiecte au `vercel.json`: instalarea se face cu Bun 1.4.2 (aceeași versiune care a scris `bun.lock`), iar funcțiile rulează în `fra1` (Frankfurt), lângă baza Neon.
+Ambele proiecte au `vercel.json`: instalarea se face cu Bun 1.4.2 prin `npx --yes bun@1.4.2 install` (aceeași versiune care a scris `bun.lock`), iar funcțiile rulează în `fra1` (Frankfurt), lângă baza Neon.
 
 ## 1. Proiectul API (primul)
 1. vercel.com → **Add New… → Project** → importă `alexgdin/arbitra`.
 2. **Project Name:** `arbitra-api`. **Root Directory:** `apps/server` (Framework: Hono, detectat automat). Lasă bifat „Include files outside the root directory”.
 3. **Environment Variables:**
    - `DATABASE_URL`: același ca în `apps/server/.env` (de preferat varianta `-pooler` de la Neon).
-   - `BETTER_AUTH_SECRET`: un șir nou, de cel puțin 32 de caractere (de exemplu `openssl rand -base64 32`).
+   - `BETTER_AUTH_SECRET`: un șir nou, de cel puțin 32 de caractere (de exemplu `bun -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`).
    - `BETTER_AUTH_URL`: `https://arbitra.vercel.app` (domeniul **site-ului**, fără `/` la final).
    - `CORS_ORIGIN`: `https://arbitra.vercel.app` (tot domeniul site-ului).
    - `NODE_ENV`: `production`.
