@@ -105,7 +105,7 @@ Pe unele versiuni de Node pentru Windows, trimiterea telemetriei varlock la ieș
 | `bun run build` | Compilează toate aplicațiile |
 | `bun run check-types` | Verifică tipurile TypeScript în tot proiectul |
 | `bun run --cwd packages/api test` | Testele API-ului (potrivire, optimizare de coș, căutare) |
-| `bun run --cwd apps/server test` | Testele serverului (limitare de cereri) |
+| `bun test` în `apps/server/` | Testele serverului (limitare de cereri) |
 | `bun test` în `extension/` | Testele extensiei |
 | `bun run db:push` | Aplică schema Drizzle în baza de date |
 | `bun run db:studio` | Deschide Drizzle Studio |
@@ -132,7 +132,7 @@ docs/         PROJECT_CONTEXT.md (context tehnic), NEXT_STEPS.md (ce a rămas ș
 - **Sumele sunt numere întregi în bani** (129,99 RON = `12999`) peste tot. Formatarea se face doar în `apps/web/src/lib/format.ts`.
 - **Potrivirea între magazine** nu se bazează pe un singur câmp: magazinele expun identificatori diferiți (eMAG doar codul modelului, Altex un EAN real, PC Garage un cod cu sufix). Două oferte sunt același produs dacă au același EAN valid sau același cod de model normalizat; sufixele de producător se taie, dar variantele de capacitate nu se unesc.
 - **Optimizarea coșului** minimizează costul articolelor plus transportul, cu pragul de transport gratuit al fiecărui magazin: căutare exactă până la 12 articole, euristică peste această limită.
-- **Datele vin de la utilizatori, nu din scraping pe server** (`robots.txt` de la eMAG interzice `/product/` pentru crawlere). Extensia trimite prețul paginii pe care o vizitezi, doar când ești conectat.
+- **Datele vin de la utilizatori, nu din scraping pe server:** serverul nu descarcă pagini din magazine. Extensia trimite prețul paginii de produs pe care o vizitezi, doar când ești conectat.
 - **Siguranța suprafeței publice:** magazine permise doar `emag`, `pcgarage`, `altex`; linkurile trebuie să fie pe domeniul magazinului; identificatorii nu pot fi suprascriși; limite pe lungimea câmpurilor; limitare de cereri pe `catalog.*` și limită la mărimea loturilor tRPC.
 
 ## Variabile de mediu
