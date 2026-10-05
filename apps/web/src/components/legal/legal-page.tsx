@@ -5,9 +5,9 @@ import Link from "next/link";
 export const LEGAL_LAST_UPDATED = "5 octombrie 2026";
 export const LEGAL_LAST_UPDATED_ISO = "2026-10-05";
 
-/** Câmpuri vizibile, de completat de echipă înainte de lansarea publică. */
-export const OPERATOR_PLACEHOLDER = "[Numele echipei]";
-export const CONTACT_PLACEHOLDER = "[email de contact]";
+/** Operatorul și adresa de contact, afișate în toate paginile legale. */
+export const OPERATOR_PLACEHOLDER = "Hrongobar";
+export const CONTACT_PLACEHOLDER = "hrongobar@gmail.com";
 
 const LEGAL_LINKS = [
 	{ href: "/termeni", label: "Termeni și condiții" },
@@ -19,9 +19,7 @@ type LegalHref = (typeof LEGAL_LINKS)[number]["href"];
 
 export function Placeholder({ children }: { children: React.ReactNode }) {
 	return (
-		<mark className="rounded bg-warning/15 px-1 py-0.5 font-medium text-foreground">
-			{children}
-		</mark>
+		<span className="font-medium text-foreground">{children}</span>
 	);
 }
 
@@ -106,10 +104,9 @@ export function LegalPage({
 					className="mt-0.5 size-4 shrink-0 text-warning"
 				/>
 				<p className="text-pretty">
-					Arbitra este un prototip realizat la un hackathon, nu un serviciu
-					comercial lansat. Datele operatorului ({OPERATOR_PLACEHOLDER}) și
-					adresa de contact ({CONTACT_PLACEHOLDER}) sunt marcate vizibil și vor
-					fi completate de echipă înainte de orice lansare publică.
+					Arbitra este un prototip realizat la un hackathon de echipa{" "}
+					{OPERATOR_PLACEHOLDER}, nu un serviciu comercial lansat. Pentru orice
+					întrebare ne poți scrie la {CONTACT_PLACEHOLDER}.
 				</p>
 			</aside>
 
