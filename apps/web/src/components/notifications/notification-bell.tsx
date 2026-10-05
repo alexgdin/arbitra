@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
+import { prefersReducedMotion } from "@/components/motion/reduced-motion";
 import { getProductHref } from "@/components/search/hrefs";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { authClient } from "@/lib/auth-client";
@@ -127,13 +128,29 @@ export function NotificationBell() {
     }
   }, [query.data, signedIn, readSet, openItem]);
 
-  if (!signedIn) {
-    return null;
-  }
-
   const items = query.data ?? [];
   const unreadKeys = items.map(notificationKey).filter((key) => !readSet.has(key));
   const unread = unreadKeys.length;
+
+  // The bell rings briefly when the unread count goes up after the first load (not on page load).
+  const lastUnread = useRef<number | null>(null);
+  const [ring, setRing] = useState(0);
+
+  useEffect(() => {
+    if (!(signedIn && query.data)) {
+      lastUnread.current = null;
+      return;
+    }
+    const previous = lastUnread.current;
+    lastUnread.current = unread;
+    if (previous !== null && unread > previous && !prefersReducedMotion()) {
+      setRing((count) => count + 1);
+    }
+  }, [signedIn, query.data, unread]);
+
+  if (!signedIn) {
+    return null;
+  }
 
   return (
     <>
@@ -142,11 +159,20 @@ export function NotificationBell() {
           render={<Button variant="ghost" size="icon" className="relative" />}
           aria-label={`Notificări, ${unreadLabel(unread)}`}
         >
-          <Bell aria-hidden="true" />
+          {/* a new key restarts the ring animation */}
+          <Bell
+            key={ring}
+            aria-hidden="true"
+            className={cn(
+              ring > 0 &&
+                "origin-top motion-safe:animate-[arbitra-bell-ring_900ms_cubic-bezier(0.36,0.07,0.19,0.97)]",
+            )}
+          />
           {unread > 0 ? (
             <Badge
+              key={unread}
               aria-hidden="true"
-              className="pointer-events-none absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 text-[10px] tabular-nums leading-none"
+              className="pointer-events-none absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 text-[10px] tabular-nums leading-none motion-safe:animate-[arbitra-pop_420ms_cubic-bezier(0.22,1,0.36,1)]"
             >
               {unread > 9 ? "9+" : unread}
             </Badge>

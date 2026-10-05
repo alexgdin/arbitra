@@ -23,6 +23,7 @@ import Link from "next/link";
 
 import { EmptyState } from "@/components/empty-state";
 import { ENTER } from "@/components/dashboard/enter-animation";
+import { staggerStyle } from "@/components/motion/stagger";
 import { trpc } from "@/utils/trpc";
 
 import { QueryError, TargetsSkeleton } from "./broker-states";
@@ -138,8 +139,12 @@ function TargetsList({ targets }: { targets: BrokerTarget[] }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {targets.map((target) => (
-              <TableRow key={target.productId}>
+            {targets.map((target, index) => (
+              <TableRow
+                key={target.productId}
+                className="arbitra-enter"
+                style={staggerStyle(index)}
+              >
                 <TableCell className="w-full min-w-40 max-w-0">
                   <TargetTitle target={target} />
                 </TableCell>

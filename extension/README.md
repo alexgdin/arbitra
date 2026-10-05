@@ -127,7 +127,7 @@ Nu cer instalare de pachete și nu folosesc rețeaua: `chrome` și `fetch` sunt 
 - **Doar Chrome** (și, probabil, alte browsere Chromium cu Manifest V3; netestat). Firefox nu este suportat.
 - **Extragerea depinde de structura paginilor.** O schimbare a datelor structurate sau a adreselor de produs poate opri extragerea. Prețurile peste 100.000 RON (plafonul serverului) nu se trimit, iar paginile în altă monedă decât RON se ignoră (vezi „Limite ale observațiilor”).
 - **Limite de cereri pe server:** apelurile `catalog.*` sunt limitate la 90 pe minut per client, `product.ingestPrice` la 120 pe minut și `cart.optimize` la 30 pe minut. Un apel grupat numără fiecare procedură din el și poate avea cel mult 20 de apeluri, iar corpul unei cereri cel mult 256 KiB. După un 429 extensia face pauză (vezi „Limita de cereri a serverului”). Cheia clientului este adresa conexiunii: în spatele unui reverse proxy sau a unei rețele comune mai mulți utilizatori pot împărți aceeași limită.
-- Iconițele sunt generate de `scripts/make-icons.js` și sunt provizorii.
+- Iconițele sunt generate din logo-ul Arbitra de `scripts/make-brand-assets.ps1` (împreună cu logo-ul și favicon-ul aplicației web).
 
 ## Harta fișierelor
 
@@ -137,7 +137,7 @@ extension/
   popup.html/js/css      Fereastra extensiei: conexiune, comutator, ultimele prețuri
   options.html/js/css    Pagina de setări: adresa API și web, permisiune, test de conexiune
   icons/                 Iconițe 16, 32, 48, 128
-  scripts/make-icons.js  Generează iconițele (bun extension/scripts/make-icons.js)
+  scripts/make-brand-assets.ps1  Generează iconițele și logo-urile din logo-ul sursă (PowerShell)
   src/
     extract.js           Extragere produs și preț din pagină (script clasic, PretPilotExtract)
     overlay.js           Panoul „Același produs în alte magazine” (script clasic, PretPilotOverlay)

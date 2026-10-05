@@ -1,6 +1,7 @@
 import { cn } from "@my-better-t-app/ui/lib/utils";
 import { CircleCheck, PiggyBank } from "lucide-react";
 
+import { CountUp } from "@/components/motion/count-up";
 import { formatBani } from "@/lib/format";
 import { getStore } from "@/lib/stores";
 
@@ -32,8 +33,13 @@ function describeSavings(totals: Totals, currency: string) {
   const headline =
     vsSingleStore > 0 ? (
       <>
-        Economisești <Money bani={vsSingleStore} currency={currency} /> față de cumpărarea dintr-un
-        singur magazin
+        Economisești{" "}
+        <CountUp
+          value={vsSingleStore}
+          currency={currency}
+          className="whitespace-nowrap tabular-nums"
+        />{" "}
+        față de cumpărarea dintr-un singur magazin
       </>
     ) : (
       "Împărțirea actuală e deja cea mai ieftină"

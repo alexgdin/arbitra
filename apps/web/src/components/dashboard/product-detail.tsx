@@ -134,7 +134,7 @@ export function ProductDetail({ item }: { item: CartItem }) {
         <div className="flex flex-wrap items-center gap-1.5">
           <StoreBadge store={item.store} />
           {isTargetReached(item) ? (
-            <Badge variant="success">
+            <Badge variant="success" className="motion-safe:animate-[arbitra-pop_520ms_cubic-bezier(0.22,1,0.36,1)]">
               <Check aria-hidden="true" />
               Țintă atinsă
             </Badge>
@@ -173,7 +173,7 @@ export function ProductDetail({ item }: { item: CartItem }) {
 
 export function ProductDetailSkeleton() {
   return (
-    <Card aria-hidden="true">
+    <Card aria-hidden="true" className="arbitra-shimmer">
       <CardHeader className="gap-3">
         <Skeleton className="h-6 w-24 rounded-full" />
         <Skeleton className="h-6 w-3/4" />

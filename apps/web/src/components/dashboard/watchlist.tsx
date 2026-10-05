@@ -10,6 +10,7 @@ import { useState } from "react";
 
 import type { CartItem } from "@/components/cart/types";
 import { EmptyState } from "@/components/empty-state";
+import { staggerStyle } from "@/components/motion/stagger";
 import { StoreBadge } from "@/components/store-badge";
 import { formatBani } from "@/lib/format";
 import { trpc } from "@/utils/trpc";
@@ -55,10 +56,13 @@ function WatchlistRow({
   item,
   selected,
   onSelect,
+  index,
 }: {
   item: CartItem;
   selected: boolean;
   onSelect: (productId: string) => void;
+  /** Position in the list, for the staggered entrance. */
+  index: number;
 }) {
   const history = useProductHistory(item.productId, SPARKLINE_DAYS);
   const { currentPrice, targetPrice, currency } = item;
@@ -71,7 +75,10 @@ function WatchlistRow({
   }
 
   return (
-    <li className="rounded-xl border bg-card shadow-sm lg:rounded-none lg:border-x-0 lg:border-t-0 lg:shadow-none lg:last:border-b-0">
+    <li
+      className="arbitra-enter rounded-xl border bg-card shadow-sm lg:rounded-none lg:border-x-0 lg:border-t-0 lg:shadow-none lg:last:border-b-0"
+      style={staggerStyle(index, 70)}
+    >
       <button
         type="button"
         aria-pressed={selected}
@@ -89,7 +96,7 @@ function WatchlistRow({
             <span className="flex flex-wrap items-center gap-1.5">
               <StoreBadge store={item.store} />
               {reached ? (
-                <Badge variant="success">
+                <Badge variant="success" className="motion-safe:animate-[arbitra-pop_520ms_cubic-bezier(0.22,1,0.36,1)]">
                   <Check aria-hidden="true" />
                   Țintă atinsă
                 </Badge>
@@ -203,16 +210,17 @@ export function Watchlist({
       </div>
 
       {loading ? (
-        <div aria-hidden="true" className={LIST_CLASSES}>
+        <div aria-hidden="true" className={cn("arbitra-shimmer", LIST_CLASSES)}>
           {["a", "b", "c"].map((key) => (
             <WatchlistRowSkeleton key={key} />
           ))}
         </div>
       ) : (
         <ul className={LIST_CLASSES}>
-          {visible.map((item) => (
+          {visible.map((item, index) => (
             <WatchlistRow
               key={item.id}
+              index={index}
               item={item}
               selected={item.productId === selectedId}
               onSelect={onSelect}

@@ -11,8 +11,14 @@
 //   bun run db:seed:reset --yes --no-seed    doar șterge datele demo
 //
 // Tot ce creează scriptul se recunoaște după: produse cu externalId "demo-*" și userul DEMO_EMAIL.
+// În plus, scriptul adaugă câteva produse REALE (REAL_PRODUCTS), cu id-ul real din magazin și pagina
+// reală de produs. Ele nu sunt date demo: --reset nu le șterge, iar extensia le actualizează mai târziu.
 
-import { canonicalGtin, isValidGtin } from "@my-better-t-app/api/lib/identifiers";
+import {
+  canonicalGtin,
+  isValidGtin,
+  normalizeModelCode,
+} from "@my-better-t-app/api/lib/identifiers";
 import { buildProductSearchText } from "@my-better-t-app/api/lib/search";
 import type { ShippingAddress } from "@my-better-t-app/db/schema/auth";
 import { user } from "@my-better-t-app/db/schema/auth";
@@ -23,7 +29,7 @@ import {
   priceHistory,
   products,
 } from "@my-better-t-app/db/schema/commerce";
-import { eq, inArray, like, sql } from "drizzle-orm";
+import { and, eq, inArray, like, sql } from "drizzle-orm";
 
 import { ENV } from "../env.server";
 import { auth, db } from "../services";
@@ -55,13 +61,16 @@ type Offer = {
   usual?: number; // prețul obișnuit împărțit la cel curent (peste 1: prețul curent e avantajos)
 };
 
-type CatalogItem = { ean: string; offers: Record<Store, Offer> };
+// `query` (marcă + model) construiește linkul către căutarea reală din fiecare magazin: produsele demo
+// nu au pagini reale, dar linkul trebuie să ducă la oferte existente, nu la o pagină 404.
+type CatalogItem = { ean: string; query: string; offers: Record<Store, Offer> };
 
 // Același EAN (GTIN-13 valid) în toate cele 3 magazine, ca optimizarea coșului să aibă alternative reale.
 // Numărul din externalId e poziția produsului în listă (1-9): "demo-<magazin>-<n>".
 const CATALOG: CatalogItem[] = [
   {
     ean: "4548736132580",
+    query: "Sony WH-1000XM5",
     offers: {
       emag: {
         title: "Căști wireless Sony WH-1000XM5, Noise Cancelling, Bluetooth, Negru",
@@ -82,6 +91,7 @@ const CATALOG: CatalogItem[] = [
   },
   {
     ean: "8806095347127",
+    query: "Samsung Galaxy S24",
     offers: {
       emag: {
         title: "Telefon mobil Samsung Galaxy S24, Dual SIM, 8GB RAM, 128GB, 5G, Onyx Black",
@@ -102,6 +112,7 @@ const CATALOG: CatalogItem[] = [
   },
   {
     ean: "0196802948173",
+    query: "Lenovo IdeaPad Slim 5",
     offers: {
       emag: {
         title: "Laptop Lenovo IdeaPad Slim 5 16 inch, AMD Ryzen 7 7730U, 16GB, 512GB SSD, Cloud Grey",
@@ -121,6 +132,7 @@ const CATALOG: CatalogItem[] = [
   },
   {
     ean: "8806091052841",
+    query: "LG UltraGear 27GP850-B",
     offers: {
       emag: {
         title: "Monitor Gaming LG UltraGear 27GP850-B, 27 inch, QHD, Nano IPS, 165Hz, 1ms",
@@ -140,6 +152,7 @@ const CATALOG: CatalogItem[] = [
   },
   {
     ean: "5099206108851",
+    query: "Logitech MX Master 3S",
     offers: {
       emag: {
         title: "Mouse wireless Logitech MX Master 3S, Bluetooth, 8000 DPI, Graphite",
@@ -159,6 +172,7 @@ const CATALOG: CatalogItem[] = [
   },
   {
     ean: "6942345600016",
+    query: "Keychron K2 V2",
     offers: {
       emag: {
         title: "Tastatură mecanică wireless Keychron K2 V2, layout 75%, Gateron Brown, RGB",
@@ -178,6 +192,7 @@ const CATALOG: CatalogItem[] = [
   },
   {
     ean: "8806094215373",
+    query: "Samsung 990 PRO",
     offers: {
       emag: {
         title: "SSD Samsung 990 PRO, 1TB, M.2 2280, PCIe Gen4 x4 NVMe",
@@ -198,6 +213,7 @@ const CATALOG: CatalogItem[] = [
   },
   {
     ean: "6970995783254",
+    query: "Roborock Q7",
     offers: {
       emag: {
         title: "Aspirator robot Roborock Q7, funcție mop, 4200 Pa, navigare LiDAR, Negru",
@@ -217,6 +233,7 @@ const CATALOG: CatalogItem[] = [
   },
   {
     ean: "0711719577300",
+    query: "Sony PlayStation 5 Slim",
     offers: {
       emag: {
         title: "Consolă PlayStation 5 Slim Disc Edition, 1TB, Alb",
@@ -292,23 +309,94 @@ const SHIPPING_ADDRESS: ShippingAddress = {
   country: "România",
 };
 
-const PRODUCT_URLS: Record<Store, (slug: string, number: number) => string> = {
-  emag: (slug, number) => `https://www.emag.ro/${slug}/pd/${demoSku(number)}/`,
-  pcgarage: (slug) => `https://www.pcgarage.ro/${slug}/`,
-  altex: (slug, number) => `https://www.altex.ro/${slug}/cpd/${demoSku(number)}/`,
+// Formatul real al căutării din fiecare magazin (verificat în browser), ca linkurile demo să funcționeze.
+const SEARCH_URLS: Record<Store, (query: string) => string> = {
+  emag: (query) => `https://www.emag.ro/search/${encodeURIComponent(query)}`,
+  pcgarage: (query) => `https://www.pcgarage.ro/cauta/${encodeURIComponent(query)}/`,
+  altex: (query) => `https://altex.ro/cauta/?q=${encodeURIComponent(query)}`,
 };
 
-function demoSku(number: number): string {
-  return `DEMO${String(number).padStart(4, "0")}`;
+// ---------------------------------------------------------------------------
+// Produse reale, observate pe site-urile magazinelor pe 4 octombrie 2026
+// ---------------------------------------------------------------------------
+
+type RealProduct = {
+  store: Store;
+  externalId: string; // id-ul real din magazin, același pe care îl trimite extensia
+  title: string;
+  url: string;
+  ean: string | null;
+  mpn: string;
+  price: number; // în bani
+  inStock: boolean;
+};
+
+const REAL_CHECKED_AT = new Date("2026-10-04T20:00:00Z");
+
+const REAL_PRODUCTS: RealProduct[] = [
+  {
+    store: "emag",
+    externalId: "DHDY3T3BM",
+    title: "Solid State Drive (SSD) Western Digital Green SN3000 NVMe SSD, 2TB",
+    url: "https://www.emag.ro/solid-state-drive-ssd-western-digital-green-sn3000-nvme-ssd-2tb-wds200t4g0e/pd/DHDY3T3BM/",
+    ean: null,
+    mpn: "WDS200T4G0E",
+    price: 149_077,
+    inStock: true,
+  },
+  {
+    store: "altex",
+    externalId: "SSDWDS200T4G0E",
+    title:
+      "Solid-State Drive (SSD) WESTERN DIGITAL Green SN3000, 2TB, PCIe Gen 4, M.2 PCIe, WDS200T4G0E",
+    url: "https://altex.ro/solid-state-drive-ssd-western-digital-green-sn3000-2tb-pcie-gen-4-m-2-pcie-wds200t4g0e/cpd/SSDWDS200T4G0E/",
+    ean: "718037904610",
+    mpn: "WDS200T4G0E",
+    price: 119_999,
+    inStock: true,
+  },
+  {
+    store: "pcgarage",
+    externalId: "3202727",
+    title: "SSD WD SanDisk Green SN3000 1TB PCI Express 4.0 x4 M.2 2280",
+    url: "https://www.pcgarage.ro/ssd/wd-sandisk/green-sn3000-1tb-pci-express-40-x4-m2-2280/",
+    ean: null,
+    mpn: "WDS100T4G0E",
+    price: 73_999,
+    inStock: true,
+  },
+];
+
+for (const { externalId, ean } of REAL_PRODUCTS) {
+  if (externalId.startsWith(DEMO_PREFIX)) {
+    throw new Error(`Real product ${externalId} must not use the demo prefix`);
+  }
+  if (ean !== null && !isValidGtin(ean)) {
+    throw new Error(`Real product ${externalId} has an invalid EAN`);
+  }
 }
 
-function slugify(text: string): string {
-  return text
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
+export function buildRealProducts(): NewProduct[] {
+  return REAL_PRODUCTS.map((item): NewProduct => {
+    const ean = item.ean ? canonicalGtin(item.ean) : null;
+    const mpn = normalizeModelCode(item.mpn);
+    return {
+      store: item.store,
+      externalId: item.externalId,
+      ean,
+      mpn,
+      title: item.title,
+      searchText: buildProductSearchText(item.title, ean, mpn),
+      url: item.url,
+      imageUrl: null,
+      currency: "RON",
+      currentPrice: item.price,
+      inStock: item.inStock,
+      lastCheckedAt: REAL_CHECKED_AT,
+      createdAt: REAL_CHECKED_AT,
+      updatedAt: REAL_CHECKED_AT,
+    };
+  });
 }
 
 function chunk<T>(items: T[], size: number): T[][] {
@@ -447,7 +535,7 @@ export function buildDemoRows(now: number): DemoRow[] {
           ean,
           title: offer.title,
           searchText: buildProductSearchText(offer.title, ean),
-          url: PRODUCT_URLS[store](slugify(offer.title), number),
+          url: SEARCH_URLS[store](item.query),
           imageUrl: null,
           currency: "RON",
           currentPrice: offer.price,
@@ -507,6 +595,7 @@ function describePlan(flags: Flags): string[] {
   if (!flags.noSeed) {
     plan.push(
       `upsert ${CATALOG.length * STORES.length} demo products ("${DEMO_PREFIX}*") with ~${HISTORY_DAYS} days of price history`,
+      `upsert ${REAL_PRODUCTS.length} real products (real store ids and product pages, checked ${REAL_CHECKED_AT.toISOString()}) without overwriting fresher data`,
       `create user ${DEMO_EMAIL} if missing, then set its Auto-Broker settings and shipping address`,
       `replace its cart (${CART.length} items) and orders (${ORDERS.length})`
     );
@@ -566,6 +655,91 @@ async function resetDemoData() {
 }
 
 const excluded = (column: string) => sql.raw(`excluded."${column}"`);
+
+// Produsele reale: upsert după (magazin, externalId), fără să suprascrie date mai noi venite de la
+// extensie; EAN-ul și mpn-ul deja salvate rămân (prima scriere câștigă, ca la ingestie).
+// Istoricul primește un singur punct, la momentul observației, doar dacă nu există deja.
+async function seedRealProducts() {
+  const rows = buildRealProducts();
+
+  return db.transaction(async (tx) => {
+    await tx
+      .insert(products)
+      .values(rows)
+      .onConflictDoUpdate({
+        target: [products.store, products.externalId],
+        set: {
+          ean: sql`coalesce(${products.ean}, excluded."ean")`,
+          mpn: sql`coalesce(${products.mpn}, excluded."mpn")`,
+          title: excluded("title"),
+          searchText: excluded("search_text"),
+          url: excluded("url"),
+          currency: excluded("currency"),
+          currentPrice: excluded("current_price"),
+          inStock: excluded("in_stock"),
+          lastCheckedAt: excluded("last_checked_at"),
+          updatedAt: excluded("updated_at"),
+        },
+        setWhere: sql`${products.lastCheckedAt} is null or ${products.lastCheckedAt} <= excluded."last_checked_at"`,
+      });
+
+    const saved = await tx
+      .select({
+        id: products.id,
+        store: products.store,
+        externalId: products.externalId,
+      })
+      .from(products)
+      .where(
+        inArray(
+          products.externalId,
+          REAL_PRODUCTS.map((item) => item.externalId)
+        )
+      );
+    const idByKey = new Map(
+      saved.map((p) => [`${p.store}:${p.externalId}`, p.id])
+    );
+    const realIds = REAL_PRODUCTS.flatMap((item) => {
+      const id = idByKey.get(`${item.store}:${item.externalId}`);
+      return id ? [id] : [];
+    });
+
+    const existing =
+      realIds.length > 0
+        ? await tx
+            .select({ productId: priceHistory.productId })
+            .from(priceHistory)
+            .where(
+              and(
+                inArray(priceHistory.productId, realIds),
+                eq(priceHistory.recordedAt, REAL_CHECKED_AT)
+              )
+            )
+        : [];
+    const withPoint = new Set(existing.map((row) => row.productId));
+
+    const points = REAL_PRODUCTS.flatMap((item) => {
+      const productId = idByKey.get(`${item.store}:${item.externalId}`);
+      if (!productId || withPoint.has(productId)) {
+        return [];
+      }
+      return [
+        {
+          productId,
+          price: item.price,
+          inStock: item.inStock,
+          source: "manual" as const,
+          recordedAt: REAL_CHECKED_AT,
+        },
+      ];
+    });
+    if (points.length > 0) {
+      await tx.insert(priceHistory).values(points);
+    }
+
+    return { products: realIds.length, pricePoints: points.length };
+  });
+}
 
 async function seedDemoData(now: number) {
   const demoUserId = await ensureDemoUser();
@@ -713,6 +887,7 @@ async function main() {
   }
 
   const summary = await seedDemoData(Date.now());
+  const real = await seedRealProducts();
   console.log("Seed complete:");
   console.log(
     `  products: ${summary.products} (${summary.outOfStock} out of stock)`
@@ -720,6 +895,9 @@ async function main() {
   console.log(`  price points: ${summary.pricePoints}`);
   console.log(`  cart items: ${summary.cartItems}`);
   console.log(`  orders: ${summary.orders}`);
+  console.log(
+    `  real products: ${real.products} (${real.pricePoints} new price points)`
+  );
   console.log(
     `Demo login: ${DEMO_EMAIL} (password: see DEMO_PASSWORD in seed.ts)`
   );

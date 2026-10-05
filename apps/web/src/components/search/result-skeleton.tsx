@@ -7,7 +7,7 @@ const SKELETON_OFFERS = [0, 1, 2] as const;
 /** Cartonașe de încărcare, cu aceeași formă ca ResultCard. Decorative: starea o anunță regiunea live. */
 export function ResultSkeleton() {
   return (
-    <ul aria-hidden="true" className="grid gap-4 lg:grid-cols-2">
+    <ul aria-hidden="true" className="arbitra-shimmer grid gap-4 lg:grid-cols-2">
       {SKELETON_CARDS.map((card) => (
         <li key={card} className="flex">
           <Card className="w-full">

@@ -13,6 +13,7 @@ import { cn } from "@my-better-t-app/ui/lib/utils";
 import { Check, ExternalLink } from "lucide-react";
 
 import { FreshnessBadge } from "@/components/freshness-badge";
+import { staggerStyle } from "@/components/motion/stagger";
 import { StoreBadge } from "@/components/store-badge";
 import { formatBani } from "@/lib/format";
 import { getSafeHref } from "@/lib/safe-href";
@@ -119,11 +120,12 @@ function OfferLink({
 function OffersCards({ item }: { item: CatalogItem }) {
   return (
     <ul aria-labelledby={TITLE_ID} className="space-y-3 @4xl:hidden">
-      {item.offers.map((offer) => (
+      {item.offers.map((offer, index) => (
         <li
           key={offer.productId}
+          style={staggerStyle(index)}
           className={cn(
-            "space-y-3 rounded-xl border bg-card p-4 shadow-sm",
+            "arbitra-enter arbitra-lift space-y-3 rounded-xl border bg-card p-4 shadow-sm",
             isBestOffer(item, offer) && "border-success/30 bg-success/5",
           )}
         >
@@ -161,10 +163,14 @@ function OffersDesktopTable({ item }: { item: CatalogItem }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {item.offers.map((offer) => (
+          {item.offers.map((offer, index) => (
             <TableRow
               key={offer.productId}
-              className={cn(isBestOffer(item, offer) && "bg-success/5 hover:bg-success/10")}
+              style={staggerStyle(index)}
+              className={cn(
+                "arbitra-enter",
+                isBestOffer(item, offer) && "bg-success/5 hover:bg-success/10",
+              )}
             >
               <TableCell>
                 <StoreBadge store={offer.store} />

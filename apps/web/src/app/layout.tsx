@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "../index.css";
+import CookieConsent from "@/components/cookie-consent";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import Providers from "@/components/providers";
@@ -52,6 +53,7 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
+          <CookieConsent />
         </Providers>
       </body>
     </html>

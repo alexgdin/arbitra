@@ -52,7 +52,8 @@ body {
 h1, h2, p { margin: 0; }
 h1 { font-size: 16px; font-weight: 700; }
 .muted { color: var(--muted-foreground); }
-.logo { border-radius: 6px; }
+/* iconița are deja pătratul rotunjit desenat în ea */
+.logo { display: block; flex-shrink: 0; }
 :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 [hidden] { display: none !important; }
 

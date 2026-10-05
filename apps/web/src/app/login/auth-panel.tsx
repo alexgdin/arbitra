@@ -81,7 +81,26 @@ export default function AuthPanel() {
   return (
     <div ref={panelRef}>
       {mode === "sign-in" ? (
-        <SignInForm onSwitchToSignUp={() => switchTo("sign-up")} />
+        <>
+          <SignInForm onSwitchToSignUp={() => switchTo("sign-up")} />
+          <p className="mt-4 text-pretty text-center text-muted-foreground text-xs">
+            Prin conectare confirmi că folosești Arbitra conform{" "}
+            <Link
+              href="/termeni"
+              className="rounded-sm font-medium text-foreground underline underline-offset-4 outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              Termenilor și condițiilor
+            </Link>{" "}
+            și{" "}
+            <Link
+              href="/confidentialitate"
+              className="rounded-sm font-medium text-foreground underline underline-offset-4 outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              Politicii de confidențialitate
+            </Link>
+            .
+          </p>
+        </>
       ) : (
         <SignUpForm onSwitchToSignIn={() => switchTo("sign-in")} />
       )}

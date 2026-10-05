@@ -38,7 +38,7 @@ const TARGET_ROWS = ["first", "second", "third"] as const;
 
 export function TargetsSkeleton() {
   return (
-    <div aria-busy="true" className="space-y-3">
+    <div aria-busy="true" className="arbitra-shimmer space-y-3">
       <p role="status" className="sr-only">
         Se încarcă produsele cu preț țintă…
       </p>

@@ -14,7 +14,7 @@ export function ProductSkeleton() {
       <p role="status" className="sr-only">
         Se încarcă produsul…
       </p>
-      <div aria-hidden="true" className="space-y-6">
+      <div aria-hidden="true" className="arbitra-shimmer space-y-6">
         <div className={SPLIT_LAYOUT}>
           <div className="space-y-3">
             <Skeleton className="h-8 w-11/12" />

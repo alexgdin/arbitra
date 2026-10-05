@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { formatCount } from "@/components/cart/plural";
 import { FreshnessBadge } from "@/components/freshness-badge";
+import { ScrambleText } from "@/components/motion/scramble-text";
 
 import type { CatalogItem } from "./types";
 
@@ -26,7 +27,8 @@ export function ProductHeader({ item, className }: { item: CatalogItem; classNam
   return (
     <div className={cn("min-w-0 space-y-3", className)}>
       <h1 className="text-balance break-words font-semibold text-2xl leading-tight tracking-tight sm:text-3xl">
-        {item.title}
+        {/* long product names: a fast decode so the title settles in about a second */}
+        <ScrambleText text={item.title} stagger={Math.max(6, Math.min(30, 1200 / item.title.length))} />
       </h1>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         {item.ean ? (

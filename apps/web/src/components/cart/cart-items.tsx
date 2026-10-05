@@ -90,7 +90,7 @@ function CartSkeleton() {
   return (
     <>
       <p className="sr-only">Se încarcă coșul…</p>
-      <div aria-hidden="true" className="divide-y">
+      <div aria-hidden="true" className="arbitra-shimmer divide-y">
         {[0, 1].map((index) => (
           <div key={index} className="space-y-3 py-4 first:pt-0 last:pb-0">
             <div className="space-y-2">

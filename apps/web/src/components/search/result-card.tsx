@@ -7,6 +7,7 @@ import Link from "next/link";
 
 import { formatCount } from "@/components/cart/plural";
 import { FreshnessBadge } from "@/components/freshness-badge";
+import { staggerStyle } from "@/components/motion/stagger";
 import { StoreBadge } from "@/components/store-badge";
 import { formatBani } from "@/lib/format";
 
@@ -59,7 +60,7 @@ function OfferRow({
 }
 
 /** Un produs din rezultatele căutării, cu ofertele lui din magazine (grupate după EAN). */
-export function ResultCard({ item }: { item: CatalogItem }) {
+export function ResultCard({ item, index = 0 }: { item: CatalogItem; index?: number }) {
   const visibleOffers = item.offers.slice(0, MAX_OFFERS);
   const hiddenCount = item.offers.length - visibleOffers.length;
   const bestPrice = item.bestOffer?.price ?? null;
@@ -69,8 +70,8 @@ export function ResultCard({ item }: { item: CatalogItem }) {
   ).length;
 
   return (
-    <li className="flex">
-      <Card className="w-full">
+    <li className="arbitra-enter flex" style={staggerStyle(index, 55)}>
+      <Card className="arbitra-lift w-full">
         <CardHeader>
           <h3 className="line-clamp-2 font-semibold text-base leading-snug tracking-tight">
             <Link

@@ -3,6 +3,7 @@ import { Card, CardContent } from "@my-better-t-app/ui/components/card";
 import { cn } from "@my-better-t-app/ui/lib/utils";
 import { ExternalLink, TrendingDown } from "lucide-react";
 
+import { CountUp } from "@/components/motion/count-up";
 import { StoreBadge } from "@/components/store-badge";
 import { formatBani } from "@/lib/format";
 import { getSafeHref } from "@/lib/safe-href";
@@ -51,7 +52,10 @@ export function BestPriceCard({ item, className }: { item: CatalogItem; classNam
 
   return (
     <Card
-      className={cn("border-primary/25 bg-accent/40", className)}
+      className={cn(
+        "border-primary/25 bg-accent/40 shadow-[0_18px_50px_-24px_color-mix(in_oklch,var(--primary)_55%,transparent)]",
+        className,
+      )}
       role="region"
       aria-labelledby={TITLE_ID}
     >
@@ -59,7 +63,7 @@ export function BestPriceCard({ item, className }: { item: CatalogItem; classNam
         <div className="space-y-1.5">
           <BestPriceTitle />
           <p className="font-semibold text-4xl tabular-nums tracking-tight">
-            {formatBani(bestOffer.price, item.currency)}
+            <CountUp value={bestOffer.price} currency={item.currency} />
           </p>
           <p className="flex flex-wrap items-center gap-1.5 text-muted-foreground text-sm">
             la <StoreBadge store={bestOffer.store} />

@@ -10,6 +10,7 @@ import { Skeleton } from "@my-better-t-app/ui/components/skeleton";
 import { Info, PackageX, RefreshCw, Sparkles, TriangleAlert } from "lucide-react";
 
 import { EmptyState } from "@/components/empty-state";
+import { staggerStyle } from "@/components/motion/stagger";
 
 import { SavingsBanner } from "./savings-banner";
 import { StoreComparison } from "./store-comparison";
@@ -17,12 +18,14 @@ import { StorePlanCard } from "./store-plan-card";
 import type { CartOptimization } from "./types";
 
 const RESULT_TITLE_ID = "optimization-result-title";
+/** Delay between two cards of the optimisation plan. */
+const PLAN_STEP_MS = 120;
 
 function ResultSkeleton() {
   return (
     <>
       <p className="sr-only">Calculăm cel mai bun plan pentru coșul tău…</p>
-      <div aria-hidden="true" className="space-y-4">
+      <div aria-hidden="true" className="arbitra-shimmer space-y-4">
         <Skeleton className="h-44 rounded-xl" />
         <Skeleton className="h-60 rounded-xl" />
         <Skeleton className="h-72 rounded-xl" />
@@ -113,10 +116,21 @@ function OptimizationDetails({ data }: { data: CartOptimization }) {
     <>
       {hasPlan ? (
         <>
-          <SavingsBanner totals={data.totals} currency={data.currency} />
-          <StoreComparison optimization={data} />
-          {data.plan.map((plan) => (
-            <StorePlanCard key={plan.store} plan={plan} currency={data.currency} />
+          {/* the plan reveals one card after another: savings, comparison, then each store */}
+          <div className="arbitra-enter" style={staggerStyle(0, PLAN_STEP_MS)}>
+            <SavingsBanner totals={data.totals} currency={data.currency} />
+          </div>
+          <div className="arbitra-enter" style={staggerStyle(1, PLAN_STEP_MS)}>
+            <StoreComparison optimization={data} />
+          </div>
+          {data.plan.map((plan, index) => (
+            <div
+              key={plan.store}
+              className="arbitra-enter"
+              style={staggerStyle(index + 2, PLAN_STEP_MS)}
+            >
+              <StorePlanCard plan={plan} currency={data.currency} />
+            </div>
           ))}
         </>
       ) : (

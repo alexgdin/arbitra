@@ -3,8 +3,8 @@ import { cn } from "@my-better-t-app/ui/lib/utils";
 import { Eye, PiggyBank, ShoppingCart, Target } from "lucide-react";
 
 import type { CartItem } from "@/components/cart/types";
+import { CountUp } from "@/components/motion/count-up";
 import { StatCard } from "@/components/stat-card";
-import { formatBani } from "@/lib/format";
 
 import { ENTER } from "./enter-animation";
 import { isTargetReached } from "./watchlist";
@@ -47,7 +47,7 @@ export function OverviewStats({
 }) {
   if (loading) {
     return (
-      <div aria-hidden="true" className={GRID_CLASSES}>
+      <div aria-hidden="true" className={cn("arbitra-shimmer", GRID_CLASSES)}>
         {["produse", "tinte", "valoare", "economie"].map((key, index) => (
           <Skeleton key={key} className={cn("h-27 rounded-xl", index >= 2 && WIDE_CARD_CLASSES)} />
         ))}
@@ -61,14 +61,14 @@ export function OverviewStats({
     <div className={GRID_CLASSES}>
       <StatCard
         label="Produse urmărite"
-        value={items.length}
+        value={<CountUp value={items.length} />}
         hint="în lista ta"
         icon={<Eye />}
         className={ENTER}
       />
       <StatCard
         label="Ținte atinse"
-        value={reached}
+        value={<CountUp value={reached} />}
         hint="gata de cumpărat"
         icon={<Target />}
         tone="success"
@@ -76,14 +76,14 @@ export function OverviewStats({
       />
       <StatCard
         label="Valoarea coșului"
-        value={formatBani(cartValue, currency)}
+        value={<CountUp value={cartValue} currency={currency} />}
         hint="la prețurile de azi"
         icon={<ShoppingCart />}
         className={cn(WIDE_CARD_CLASSES, ENTER, STAT_DELAYS[2])}
       />
       <StatCard
         label="Economie până la țintă"
-        value={formatBani(savings, currency)}
+        value={<CountUp value={savings} currency={currency} />}
         hint="dacă toate ating ținta"
         icon={<PiggyBank />}
         tone="warning"

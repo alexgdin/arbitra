@@ -1,4 +1,5 @@
 import { Button } from "@my-better-t-app/ui/components/button";
+import { Checkbox } from "@my-better-t-app/ui/components/checkbox";
 import { Input } from "@my-better-t-app/ui/components/input";
 import { Label } from "@my-better-t-app/ui/components/label";
 import type { AnyFieldApi } from "@tanstack/react-form";
@@ -156,5 +157,51 @@ export function PasswordField({ field, label, autoComplete, hint, placeholder }:
         </Button>
       </div>
     </FieldFrame>
+  );
+}
+
+/** Căsuță obligatorie (de exemplu acordul pentru termeni), cu eroarea legată prin aria-describedby. */
+export function CheckboxField({
+  field,
+  label,
+  children,
+}: {
+  field: AnyFieldApi;
+  /** Numele accesibil al căsuței, fără textul ajutător al linkurilor din `children`. */
+  label: string;
+  children: React.ReactNode;
+}) {
+  const id = useId();
+  const errorId = `${id}-error`;
+  const error = getErrorMessage(field);
+
+  return (
+    <div className="grid gap-1.5">
+      <label className="flex cursor-pointer items-start gap-3 text-sm leading-snug">
+        <Checkbox
+          id={id}
+          name={field.name}
+          checked={field.state.value === true}
+          onCheckedChange={(checked) => {
+            field.handleChange(checked);
+            field.handleBlur();
+          }}
+          aria-label={label}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : undefined}
+          aria-required="true"
+          className="mt-0.5"
+        />
+        <span className="text-pretty">
+          {children}
+        </span>
+      </label>
+      {error ? (
+        <p id={errorId} role="alert" className="flex items-start gap-1.5 text-destructive text-sm">
+          <CircleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+          {error}
+        </p>
+      ) : null}
+    </div>
   );
 }

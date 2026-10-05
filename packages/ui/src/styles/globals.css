@@ -332,3 +332,133 @@
     opacity: 0;
   }
 }
+
+/*
+ * App-wide motion (Arbitra): route enter, staggered lists, skeleton shimmer, chart drawing,
+ * bell ring. All of it is decorative; the reduced-motion rule above collapses it to the final
+ * frame, and call sites use `motion-safe:` so nothing starts hidden for those users.
+ */
+@keyframes arbitra-route-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.5rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes arbitra-item-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.75rem, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes arbitra-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes arbitra-draw {
+  from {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes arbitra-bell-ring {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(16deg);
+  }
+  25% {
+    transform: rotate(-14deg);
+  }
+  40% {
+    transform: rotate(10deg);
+  }
+  55% {
+    transform: rotate(-7deg);
+  }
+  70% {
+    transform: rotate(4deg);
+  }
+  85% {
+    transform: rotate(-2deg);
+  }
+}
+
+@keyframes arbitra-shimmer {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+/* Staggered entrance for list items: set `--arbitra-delay` (e.g. index * 60ms) inline. */
+@utility arbitra-enter {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: arbitra-item-in 560ms cubic-bezier(0.22, 1, 0.36, 1) var(--arbitra-delay, 0ms)
+      backwards;
+  }
+}
+
+/* Light sweep over every skeleton inside the element (skeletons keep their own pulse). */
+@utility arbitra-shimmer {
+  & [data-slot="skeleton"] {
+    position: relative;
+    overflow: hidden;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    & [data-slot="skeleton"]::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in oklch, var(--foreground) 7%, transparent),
+        transparent
+      );
+      animation: arbitra-shimmer 1.6s ease-in-out infinite;
+    }
+  }
+}
+
+/* Soft lift and brand glow on hover or keyboard focus inside (result cards, offer rows). */
+@utility arbitra-lift {
+  transition-property: translate, box-shadow, border-color;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  &:hover,
+  &:focus-within {
+    box-shadow:
+      0 10px 30px -12px color-mix(in oklch, var(--primary) 35%, transparent),
+      0 0 0 1px color-mix(in oklch, var(--primary) 22%, transparent);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    &:hover,
+    &:focus-within {
+      translate: 0 -2px;
+    }
+  }
+}

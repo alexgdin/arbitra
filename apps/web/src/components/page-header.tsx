@@ -1,5 +1,7 @@
 import { cn } from "@my-better-t-app/ui/lib/utils";
 
+import { ScrambleText } from "@/components/motion/scramble-text";
+
 export function PageHeader({
   title,
   description,
@@ -19,7 +21,10 @@ export function PageHeader({
       )}
     >
       <div className="min-w-0 space-y-1.5">
-        <h1 className="font-semibold text-2xl tracking-tight sm:text-3xl">{title}</h1>
+        <h1 className="font-semibold text-2xl tracking-tight sm:text-3xl">
+          {/* text titles decode once on mount; the server render shows the final text */}
+          {typeof title === "string" ? <ScrambleText text={title} stagger={34} /> : title}
+        </h1>
         {description ? (
           <p className="max-w-2xl text-pretty text-muted-foreground text-sm">{description}</p>
         ) : null}

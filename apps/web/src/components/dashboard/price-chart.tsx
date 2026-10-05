@@ -22,6 +22,10 @@ const LABEL_CHAR_PX = 6.2;
 const MARKER_RADIUS = 4;
 const TOOLTIP_WIDTH = 176;
 
+/** Area and markers appear once the line has (mostly) drawn itself; only on mount. */
+const FADE_IN_CLASS =
+  "motion-safe:animate-[arbitra-fade_600ms_ease-out_700ms_backwards]";
+
 export interface PriceChartProps {
   points: readonly PricePoint[];
   targetPrice?: number | null;
@@ -261,21 +265,23 @@ function ChartSvg({
         <>
           <path
             d={`${line} L${(xs[lastIndex] ?? 0).toFixed(1)} ${plot.bottom} L${(xs[0] ?? 0).toFixed(1)} ${plot.bottom} Z`}
-            className="fill-chart-area"
+            className={cn("fill-chart-area", FADE_IN_CLASS)}
           />
+          {/* pathLength normalises the dash so the draw-in works for any line length */}
           <path
             d={line}
             fill="none"
+            pathLength={1}
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="stroke-chart-line"
+            className="stroke-chart-line motion-safe:animate-[arbitra-draw_1100ms_cubic-bezier(0.65,0,0.35,1)]"
           />
         </>
       ) : null}
 
       {markers.map(({ index, label, above }) => (
-        <g key={label}>
+        <g key={label} className={FADE_IN_CLASS}>
           <circle
             cx={xs[index]}
             cy={ys[index]}
@@ -298,7 +304,7 @@ function ChartSvg({
         cy={ys[lastIndex]}
         r={MARKER_RADIUS}
         strokeWidth={2}
-        className="fill-chart-line stroke-card"
+        className={cn("fill-chart-line stroke-card", FADE_IN_CLASS)}
       />
 
       <g

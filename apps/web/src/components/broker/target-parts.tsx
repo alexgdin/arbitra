@@ -68,7 +68,7 @@ export function TargetPrice({ target }: { target: BrokerTarget }) {
       </span>
       {target.targetReached ? (
         <div>
-          <Badge variant="success">
+          <Badge variant="success" className="motion-safe:animate-[arbitra-pop_520ms_cubic-bezier(0.22,1,0.36,1)]">
             <CircleCheck aria-hidden="true" />
             Țintă atinsă
           </Badge>

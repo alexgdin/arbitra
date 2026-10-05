@@ -3,6 +3,7 @@
 import { cn } from "@my-better-t-app/ui/lib/utils";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { BrandLogo } from "@/components/brand-logo";
 import { BRAND } from "@/lib/brand";
 
 import { introIsPending, markIntroDone } from "./intro";
@@ -125,7 +126,12 @@ export function IntroLoader() {
 					<span className="max-sm:hidden">eMAG · PC Garage · Altex</span>
 				</div>
 
-				<div className="relative flex flex-1 items-center justify-center">
+				<div className="relative flex flex-1 flex-col items-center justify-center gap-6 sm:gap-8">
+					<BrandLogo
+						alt=""
+						className="animate-[arbitra-pop_0.8s_cubic-bezier(0.22,1,0.36,1)_both] motion-reduce:animate-none"
+						size={72}
+					/>
 					<span className="mr-[-0.6em] font-light text-3xl uppercase tracking-[0.6em] sm:text-5xl">
 						{wordmark}
 					</span>

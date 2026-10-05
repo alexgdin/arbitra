@@ -1,13 +1,13 @@
 "use client";
 
 import { cn } from "@my-better-t-app/ui/lib/utils";
-import { TrendingDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { BRAND } from "@/lib/brand";
 
+import { BrandLogo } from "./brand-logo";
 import { ModeToggle } from "./mode-toggle";
 import { NotificationBell } from "./notifications/notification-bell";
 import UserMenu from "./user-menu";
@@ -60,9 +60,7 @@ export default function Header() {
 					className="flex shrink-0 items-center gap-3 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 					href="/"
 				>
-					<span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-lg shadow-primary/30">
-						<TrendingDown aria-hidden="true" className="size-4.5" />
-					</span>
+					<BrandLogo alt="" size={32} />
 					<span className="font-semibold text-[0.8rem] uppercase tracking-[0.42em] max-sm:sr-only">
 						{BRAND.name}
 					</span>

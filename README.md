@@ -1,3 +1,5 @@
+<img src="apps/web/public/brand/logo.png" width="120" alt="Logo Arbitra: cărucior de cumpărături cu o etichetă de preț verde" />
+
 # Arbitra
 
 **Același produs. Prețul cel mai mic.**

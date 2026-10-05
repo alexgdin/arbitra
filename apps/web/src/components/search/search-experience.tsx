@@ -57,8 +57,8 @@ export function SearchExperience({ initialQuery }: { initialQuery: string }) {
           isUpdating && "opacity-60",
         )}
       >
-        {items.map((item) => (
-          <ResultCard key={item.key} item={item} />
+        {items.map((item, index) => (
+          <ResultCard key={item.key} item={item} index={index} />
         ))}
       </ul>
     );
