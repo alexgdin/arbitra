@@ -1,4 +1,4 @@
-// Panou plutitor PretPilot: "Același produs în alte magazine", în colțul din dreapta-jos.
+// Panou plutitor Arbitra: "Același produs în alte magazine", în colțul din dreapta-jos.
 // Script clasic, încărcat după extract.js și înaintea content.js. Împart același scope
 // izolat, deci totul stă într-un IIFE. Stilurile trăiesc într-un Shadow DOM (nu scurg
 // nimic în pagină și nu primesc nimic de la ea), iar textele din pagină sau din API
@@ -361,7 +361,7 @@
 
     const close = el("button", "close", "×");
     close.type = "button";
-    close.setAttribute("aria-label", "Închide PretPilot pentru această pagină");
+    close.setAttribute("aria-label", "Închide Arbitra pentru această pagină");
     close.addEventListener("click", dismiss);
 
     const head = el("div", "head");
@@ -381,7 +381,7 @@
       section.append(
         buildNote("note", "Încă nu avem alte prețuri pentru acest produs.", {
           href: model.searchHref,
-          text: "Caută în PretPilot",
+          text: "Caută în Arbitra",
         })
       );
     }
@@ -395,7 +395,7 @@
     }
     if (model.showLoginHint) {
       section.append(
-        buildNote("note", "Conectează-te în PretPilot ca să contribui cu prețuri.", {
+        buildNote("note", "Conectează-te în Arbitra ca să contribui cu prețuri.", {
           href: model.loginHref,
           text: "Conectează-te",
         })
@@ -413,10 +413,10 @@
     button.setAttribute(
       "aria-label",
       model.cheaperCount > 0
-        ? `PretPilot, ${cheaperOffersLabel(model.cheaperCount)} în alte magazine`
-        : "PretPilot, prețuri din alte magazine"
+        ? `Arbitra, ${cheaperOffersLabel(model.cheaperCount)} în alte magazine`
+        : "Arbitra, prețuri din alte magazine"
     );
-    button.append(el("span", undefined, "PretPilot"));
+    button.append(el("span", undefined, "Arbitra"));
     if (model.cheaperCount > 0) {
       const count = el("span", "count", String(model.cheaperCount));
       count.setAttribute("aria-hidden", "true");
@@ -495,7 +495,7 @@
 
     const root = el("div", "root");
     root.setAttribute("role", "region");
-    root.setAttribute("aria-label", "PretPilot, prețuri în alte magazine");
+    root.setAttribute("aria-label", "Arbitra, prețuri în alte magazine");
     root.addEventListener("keydown", onKeydown);
     panel = buildPanel(model);
     pill = buildPill(model);

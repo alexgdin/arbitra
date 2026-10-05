@@ -394,11 +394,11 @@ export function sanitizeCatalogItem(raw) {
 }
 
 const ERROR_MESSAGES = new Map([
-  ["UNAUTHORIZED", "Nu ești conectat în PretPilot."],
+  ["UNAUTHORIZED", "Nu ești conectat în Arbitra."],
   ["RATE_LIMITED", "Prea multe cereri, încerc din nou în câteva minute."],
-  ["NETWORK", "Nu mă pot conecta la serverul PretPilot."],
-  ["TIMEOUT", "Serverul PretPilot nu a răspuns la timp."],
-  ["BAD_RESPONSE", "Serverul PretPilot a trimis un răspuns neașteptat."],
+  ["NETWORK", "Nu mă pot conecta la serverul Arbitra."],
+  ["TIMEOUT", "Serverul Arbitra nu a răspuns la timp."],
+  ["BAD_RESPONSE", "Serverul Arbitra a trimis un răspuns neașteptat."],
 ]);
 
 /**

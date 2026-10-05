@@ -67,7 +67,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
           Bine ai revenit
         </h1>
         <CardDescription>
-          Conectează-te ca să îți vezi coșul, prețurile țintă și comenzile automate.
+          Conectează-te ca să îți vezi coșul, prețurile țintă și alertele de preț.
         </CardDescription>
       </CardHeader>
       <CardContent>

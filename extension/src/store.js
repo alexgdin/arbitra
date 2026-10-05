@@ -17,7 +17,7 @@ const PRUNE_INTERVAL_MS = 60 * 60 * 1000;
 
 /** @param {string} action @param {unknown} error */
 function warnStorage(action, error) {
-  console.warn(`PretPilot: nu am putut ${action} în storage`, error);
+  console.warn(`Arbitra: nu am putut ${action} în storage`, error);
 }
 
 /**

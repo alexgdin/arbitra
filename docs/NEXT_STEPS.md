@@ -1,4 +1,4 @@
-# Arbitrage: ce e gata, ce a rămas și cum continui fără asistent
+# Arbitra: ce e gata, ce a rămas și cum continui fără asistent
 
 Starea la commit-ul `2ea3478` (branch `main`, 4 commit-uri noi peste `d27637c`). Verificat înainte de commit: `tsc` curat în api/server/web; teste: **649** (packages/api), **72** (apps/server), **959** (extension), toate trec. Citește și `docs/PROJECT_CONTEXT.md` (capcane tehnice, secțiunea 8) și `README.md`.
 
@@ -19,10 +19,12 @@ Fișiere de mediu: copiază `apps/server/.env.example` și `apps/web/.env.exampl
 
 ## 3. Ce NU e gata (în ordinea priorității pentru juriu)
 
-### A. Redenumirea în Arbitrage (parțială)
-Făcut doar în `apps/web/src/lib/brand.ts` (nume, tagline, descriere). **Mai apare „PretPilot”** în: extensie (manifest, popup/options, prefixul mesajelor `pretpilot:*`, globalele `PretPilotExtract`/`PretPilotOverlay`, teste), `README.md`, `docs/`, `apps/server/src/scripts/seed.ts` (email demo `demo@pretpilot.test`) și `apps/server/.env.example`. Găsești tot cu `grep -rIi pretpilot . --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=.git`. După schimbarea emailului demo, `db:seed:reset` trebuie să șteargă și vechiul utilizator.
+### A. Redenumirea în Arbitra (aproape gata)
+Numele vizibil este „Arbitra” în aplicația web (`apps/web/src/lib/brand.ts`), extensie (manifest, popup, setări, panoul de pe pagină, teste), `README.md` și `docs/`. **Au rămas intenționat** identificatorii interni ai extensiei: prefixul mesajelor `pretpilot:*`, globalele `PretPilotExtract`/`PretPilotOverlay`, id-urile din shadow DOM și URL-urile de test `pretpilot.ro`. Mai verifică `apps/server/.env.example` (numele bazei din exemplu) și emailul demo din `apps/server/src/scripts/seed.ts`. Găsești tot cu `grep -rIi pretpilot . --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=.git`. După schimbarea emailului demo, `db:seed:reset` trebuie să șteargă și vechiul utilizator.
 
 ### B. Scoaterea cumpărării automate → alerte în aplicație
+**Stare:** interfața este gata. Tab-ul „Broker automat” a devenit „Alerte de preț” (aceeași rută `/dashboard/broker`), care arată doar produsele cu țintă; comutatoarele „Cumpără automat” și formularele brokerului (limite, plată, adresă) au fost scoase, iar frontendul trimite mereu `autoBuyEnabled: false`. Rămân de făcut pașii 1 (partea de API), 2-6 de mai jos.
+
 Cerința: fără broker/cumpărare automată; utilizatorul primește **notificare în aplicație** când prețul unui produs urmărit ajunge la țintă sau sub ea.
 1. **Scoate** routerul `packages/api/src/routers/broker.ts` (și `broker.test.ts`), pagina `apps/web/src/app/dashboard/broker/` + `apps/web/src/components/broker/`, linkul „Broker automat” din `components/dashboard/dashboard-nav.tsx`, comutatoarele „Cumpără automat” din `components/dashboard/{watchlist,product-detail,target-editor}.tsx`, textele din `components/landing/features.tsx` și `components/footer.tsx`, `brokerRouter` din `routers/index.ts`.
 2. **Schema** (`packages/db/src/schema/auth.ts`, `commerce.ts`): elimină `user.broker*` și `shippingAddress`, `cart_items.autoBuyEnabled`; `orders.source` poate rămâne (enum). Aplici cu `bun run --cwd packages/db db:push` (va cere confirmare pentru coloanele șterse; conțin doar date demo).
@@ -57,4 +59,4 @@ Browserul vorbește doar cu domeniul web: în `apps/web/next.config.ts` adaugă 
 **Întrebări probabile:** *Este legal?* Nu facem scraping de pe server (robots.txt eMAG interzice `/product/`); datele vin de la utilizatori, prin extensie, și din feed-uri de afiliere (plan). *Cât de corecte sunt prețurile?* Marcăm prospețimea; după 24 h apare „preț posibil depășit”; potrivirea e conservatoare ca să nu confunde capacități diferite. *Cum câștigați bani?* Comision de afiliere la redirecționarea către magazin. *Ce împiedică prețurile false?* Cont obligatoriu pentru contribuții, validări și limite; următorul pas e reputația și coroborarea între utilizatori.
 
 ## 5. Prompt pentru un alt asistent AI
-> Lucrezi pe proiectul Arbitrage (monorepo Bun + Turborepo: Next.js 16, Hono, tRPC, Drizzle 1.0 RC, Better Auth, Postgres/Neon, extensie Chrome MV3 în `extension/`). Citește `docs/NEXT_STEPS.md`, `docs/PROJECT_CONTEXT.md` și `README.md`. Răspunde-mi în română. Verifică înainte să afirmi că ceva merge (typecheck + teste). Nu face push, nu scrie în baza de date și nu comite fără acordul meu. Începe cu secțiunea 3 din `docs/NEXT_STEPS.md`, în ordinea A, B, C, D, E.
+> Lucrezi pe proiectul Arbitra (monorepo Bun + Turborepo: Next.js 16, Hono, tRPC, Drizzle 1.0 RC, Better Auth, Postgres/Neon, extensie Chrome MV3 în `extension/`). Citește `docs/NEXT_STEPS.md`, `docs/PROJECT_CONTEXT.md` și `README.md`. Răspunde-mi în română. Verifică înainte să afirmi că ceva merge (typecheck + teste). Nu face push, nu scrie în baza de date și nu comite fără acordul meu. Începe cu secțiunea 3 din `docs/NEXT_STEPS.md`, în ordinea A, B, C, D, E.

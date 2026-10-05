@@ -5,7 +5,7 @@ import { Button } from "@my-better-t-app/ui/components/button";
 import { Skeleton } from "@my-better-t-app/ui/components/skeleton";
 import { cn } from "@my-better-t-app/ui/lib/utils";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Check, ChevronDown, ChevronUp, PackagePlus, Plus, Zap } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, PackagePlus, Plus } from "lucide-react";
 import { useState } from "react";
 
 import type { CartItem } from "@/components/cart/types";
@@ -92,12 +92,6 @@ function WatchlistRow({
                 <Badge variant="success">
                   <Check aria-hidden="true" />
                   Țintă atinsă
-                </Badge>
-              ) : null}
-              {item.autoBuyEnabled ? (
-                <Badge variant="secondary">
-                  <Zap aria-hidden="true" />
-                  Cumpără automat
                 </Badge>
               ) : null}
             </span>
@@ -188,7 +182,7 @@ export function Watchlist({
         className={className}
         icon={<PackagePlus />}
         title="Nu urmărești niciun produs încă"
-        description="Adaugă primul produs și îi urmărim prețul. Poți seta o țintă și lăsa brokerul să cumpere în locul tău."
+        description="Adaugă primul produs și îi urmărim prețul. Setează un preț țintă și te anunțăm în aplicație când prețul ajunge la el sau scade sub el."
         action={
           <Button onClick={onAddProduct}>
             <Plus aria-hidden="true" data-icon="inline-start" />

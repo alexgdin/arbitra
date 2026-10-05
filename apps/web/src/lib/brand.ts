@@ -1,6 +1,6 @@
 export const BRAND = {
-  name: "Arbitrage",
+  name: "Arbitra",
   tagline: "Același produs. Prețul cel mai mic.",
   description:
-    "Arbitrage urmărește prețurile din eMAG, PC Garage și Altex, compară același produs între magazine și te anunță când prețul ajunge la ținta ta.",
+    "Arbitra compară același produs în eMAG, PC Garage și Altex, îți arată istoricul prețului și te anunță în aplicație când prețul ajunge la ținta ta sau scade sub ea.",
 } as const;

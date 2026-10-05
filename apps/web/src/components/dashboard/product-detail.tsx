@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader } from "@my-better-t-app/ui/components/ca
 import { Separator } from "@my-better-t-app/ui/components/separator";
 import { Skeleton } from "@my-better-t-app/ui/components/skeleton";
 import { cn } from "@my-better-t-app/ui/lib/utils";
-import { Check, ExternalLink, RefreshCw, Zap } from "lucide-react";
+import { Check, ExternalLink, RefreshCw } from "lucide-react";
 import { useState } from "react";
 
 import type { CartItem } from "@/components/cart/types";
@@ -139,12 +139,6 @@ export function ProductDetail({ item }: { item: CartItem }) {
               Țintă atinsă
             </Badge>
           ) : null}
-          {item.autoBuyEnabled ? (
-            <Badge variant="secondary">
-              <Zap aria-hidden="true" />
-              Cumpără automat
-            </Badge>
-          ) : null}
         </div>
         <h2 id={titleId} className="text-balance break-words font-semibold text-lg leading-snug">
           {item.title}
@@ -170,10 +164,7 @@ export function ProductDetail({ item }: { item: CartItem }) {
           <h3 id={`${DETAIL_PANEL_ID}-target`} className="mb-3 font-semibold text-base">
             Preț țintă
           </h3>
-          <TargetEditor
-            key={`${item.productId}:${item.targetPrice}:${item.autoBuyEnabled}`}
-            item={item}
-          />
+          <TargetEditor key={`${item.productId}:${item.targetPrice}`} item={item} />
         </section>
       </CardContent>
     </Card>

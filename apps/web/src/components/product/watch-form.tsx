@@ -10,7 +10,6 @@ import {
 import { Input } from "@my-better-t-app/ui/components/input";
 import { Label } from "@my-better-t-app/ui/components/label";
 import { NativeSelect, NativeSelectOption } from "@my-better-t-app/ui/components/native-select";
-import { Switch } from "@my-better-t-app/ui/components/switch";
 import { useMutation } from "@tanstack/react-query";
 import { isTRPCClientError } from "@trpc/client";
 import { Check, Info, LoaderCircle } from "lucide-react";
@@ -58,13 +57,12 @@ function refreshWatchLists() {
   ]);
 }
 
-/** Store, target price and auto-buy for a signed-in user; saving adds the product to the dashboard. */
+/** Store and target price for a signed-in user; saving adds the product to the dashboard and its alerts. */
 export function WatchForm({ item, className }: { item: CatalogItem; className?: string }) {
   const router = useRouter();
   const fieldId = useId();
   const [productId, setProductId] = useState(pickDefaultOffer(item, item.offers)?.productId ?? "");
   const [price, setPrice] = useState(() => getSuggestedTarget(item.bestOffer?.price));
-  const [autoBuy, setAutoBuy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const track = useMutation(
@@ -93,7 +91,7 @@ export function WatchForm({ item, className }: { item: CatalogItem; className?: 
       setError("Introdu o sumă validă în lei, de exemplu 129,99.");
       return;
     }
-    track.mutate({ productId, targetPrice: targetBani, autoBuyEnabled: autoBuy });
+    track.mutate({ productId, targetPrice: targetBani, autoBuyEnabled: false });
   }
 
   return (
@@ -103,7 +101,7 @@ export function WatchForm({ item, className }: { item: CatalogItem; className?: 
           Urmărește produsul
         </h2>
         <CardDescription>
-          Alege magazinul și prețul la care vrei să cumperi. Produsul apare în panoul tău.
+          Alege magazinul și prețul țintă. Te anunțăm în aplicație când prețul ajunge la el sau scade sub el.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -153,7 +151,7 @@ export function WatchForm({ item, className }: { item: CatalogItem; className?: 
               </p>
             ) : (
               <p id={`${fieldId}-hint`} className="text-muted-foreground text-xs">
-                Prețul pe bucată la care vrei să cumperi
+                Prețul pe bucată la care vrei să fii anunțat
                 {currentPrice === null
                   ? "."
                   : `; acum este ${formatBani(currentPrice, item.currency)}.`}
@@ -161,23 +159,13 @@ export function WatchForm({ item, className }: { item: CatalogItem; className?: 
             )}
           </div>
 
-          <div className="flex items-center justify-between gap-4 rounded-lg border px-3 py-3">
-            <Label htmlFor={`${fieldId}-auto`} className="flex-col items-start gap-0.5">
-              <span>Cumpără automat</span>
-              <span className="font-normal text-muted-foreground text-xs">
-                Brokerul comandă produsul când prețul ajunge la țintă.
-              </span>
-            </Label>
-            <Switch id={`${fieldId}-auto`} checked={autoBuy} onCheckedChange={setAutoBuy} />
-          </div>
-
           <div aria-live="polite" className="space-y-2 empty:hidden">
             {alreadyBelow ? (
               <p className="flex items-start gap-2 rounded-lg bg-muted px-3 py-2 text-muted-foreground text-xs">
                 <Info aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
                 <span>
-                  Prețul curent este deja sub această țintă
-                  {autoBuy ? "; dacă brokerul e pornit, poate cumpăra imediat." : "."}
+                  Prețul curent este deja la nivelul acestei ținte sau sub ea, așa că îl vei vedea
+                  marcat „Țintă atinsă”.
                 </span>
               </p>
             ) : null}

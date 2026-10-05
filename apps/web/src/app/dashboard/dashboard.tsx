@@ -1,11 +1,13 @@
 "use client";
 
 import { Button } from "@my-better-t-app/ui/components/button";
+import { cn } from "@my-better-t-app/ui/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, RefreshCw, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 
 import { AddProductForm, focusAddProductForm } from "@/components/dashboard/add-product-form";
+import { ENTER, ENTER_DELAY } from "@/components/dashboard/enter-animation";
 import { OverviewStats } from "@/components/dashboard/overview-stats";
 import {
   DETAIL_PANEL_ID,
@@ -55,8 +57,9 @@ export default function Dashboard() {
   return (
     <>
       <PageHeader
+        className={ENTER}
         title={firstName ? `Bună, ${firstName}!` : "Bună!"}
-        description="Urmărește prețurile produselor tale și setează o țintă ca să cumperi exact la momentul potrivit."
+        description="Urmărește prețurile produselor tale și setează o țintă. Te anunțăm în aplicație când prețul ajunge la ea sau scade sub ea."
         actions={
           <Button onClick={focusAddProductForm}>
             <Plus aria-hidden="true" data-icon="inline-start" />
@@ -82,7 +85,13 @@ export default function Dashboard() {
       ) : (
         <div className="space-y-6">
           <OverviewStats items={items} loading={cart.isPending} />
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
+          <div
+            className={cn(
+              "grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start",
+              ENTER,
+              ENTER_DELAY.medium,
+            )}
+          >
             <Watchlist
               items={items}
               loading={cart.isPending}
@@ -97,7 +106,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      <AddProductForm onAdded={handleAdded} className="mt-8" />
+      <AddProductForm onAdded={handleAdded} className={cn("mt-8", ENTER, ENTER_DELAY.long)} />
     </>
   );
 }

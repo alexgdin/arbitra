@@ -8,7 +8,7 @@ import {
   CardHeader,
 } from "@my-better-t-app/ui/components/card";
 import { Skeleton } from "@my-better-t-app/ui/components/skeleton";
-import { Bot, ChartLine, type LucideIcon, Target } from "lucide-react";
+import { BellRing, ChartLine, type LucideIcon, Target } from "lucide-react";
 import Link from "next/link";
 
 import { useHydrated } from "@/hooks/use-hydrated";
@@ -20,8 +20,8 @@ import { WatchForm } from "./watch-form";
 const TITLE_ID = "urmareste-pretul";
 
 const BENEFITS: readonly { icon: LucideIcon; text: string }[] = [
-  { icon: Target, text: "Îți setezi prețul la care vrei să cumperi." },
-  { icon: Bot, text: "Brokerul automat cumpără când prețul ajunge la țintă." },
+  { icon: Target, text: "Îți setezi prețul țintă pentru produs." },
+  { icon: BellRing, text: "Te anunțăm în aplicație când prețul ajunge la țintă sau scade sub ea." },
   { icon: ChartLine, text: "Toate produsele urmărite sunt într-un singur panou." },
 ];
 
@@ -53,8 +53,8 @@ function SignedOutCard({ className }: { className?: string }) {
           Urmărește prețul gratuit
         </h2>
         <CardDescription>
-          Cu un cont gratuit urmărești prețul acestui produs, îți setezi o țintă și lași brokerul
-          automat să cumpere în locul tău.
+          Cu un cont gratuit urmărești prețul acestui produs, îți setezi o țintă și primești o
+          alertă în aplicație când prețul ajunge la ea.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

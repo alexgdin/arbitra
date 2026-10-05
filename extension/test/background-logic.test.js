@@ -431,7 +431,7 @@ describe("insigna și mesajele", () => {
   });
 
   test("describeError întoarce mesaje în română", () => {
-    expect(describeError({ code: "UNAUTHORIZED" })).toBe("Nu ești conectat în PretPilot.");
+    expect(describeError({ code: "UNAUTHORIZED" })).toBe("Nu ești conectat în Arbitra.");
     expect(describeError({ code: "RATE_LIMITED" })).toBe("Prea multe cereri, încerc din nou în câteva minute.");
     expect(describeError({ code: "NETWORK" })).toContain("Nu mă pot conecta");
     expect(describeError({ code: "TIMEOUT" })).toContain("nu a răspuns la timp");

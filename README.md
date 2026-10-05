@@ -1,8 +1,8 @@
-# Arbitrage
+# Arbitra
 
 **Același produs. Prețul cel mai mic.**
 
-Arbitrage compară prețurile aceluiași produs între magazinele online din România (eMAG, PC Garage, Altex), îți arată istoricul lor și cât de proaspăt e fiecare preț, te ajută să-ți împarți coșul între magazine ca să plătești cât mai puțin (transportul inclus) și îți permite să stabilești un preț țintă. **Nu ai nevoie de cont ca să cauți și să compari prețuri.**
+Arbitra compară prețurile aceluiași produs între magazinele online din România (eMAG, PC Garage, Altex), îți arată istoricul lor și cât de proaspăt e fiecare preț, te ajută să-ți împarți coșul între magazine ca să plătești cât mai puțin (transportul inclus) și îți permite să stabilești un preț țintă, ca să vezi în aplicație când prețul ajunge la el sau scade sub el. **Nu ai nevoie de cont ca să cauți și să compari prețuri.**
 
 Proiect făcut pentru un hackathon de 24 de ore. Este un prototip: unele părți sunt complete, altele sunt doar începute (vezi mai jos).
 
@@ -16,13 +16,16 @@ Proiect făcut pentru un hackathon de 24 de ore. Este un prototip: unele părți
 | **Potrivire între magazine** după EAN valid sau cod de model, cu regulă conservatoare (variantele de capacitate nu se unesc) | Gata |
 | **Extensie de browser** (Chrome, Manifest V3) pentru eMAG, PC Garage și Altex: extrage prețul, îl trimite când ești conectat și arată comparația pe pagină | Gata, validată pe pagini reale; încărcare manuală în Chrome |
 | Listă de urmărire cu preț țintă, grafic și adăugare manuală de produse | Gata |
+| **Alerte de preț** în panou (`/dashboard/broker`): produsele cu țintă, insigna „Țintă atinsă” și rezumatul țintelor atinse | Gata |
+| **Notificări în aplicație**: clopoțel în antet cu notificări necitite și toast când cel mai mic preț din orice magazin ajunge la ținta ta sau scade sub ea | Gata (verificare la 15 secunde) |
+| **Mod demo** pe pagina de alerte: simulează o scădere de preț pe un produs demo, ca notificarea să apară live | Gata, doar în dezvoltare |
+| **Pagina de pornire animată**: intro, titlu care se „decodează”, apariții la scroll | Gata |
 | Optimizare de coș între magazine (transport și prag de transport gratuit) | Gata, cu costuri de transport demonstrative |
 | Autentificare cu email și parolă | Gata |
-| Notificări în aplicație când prețul ajunge la țintă | **În lucru** (vezi `docs/NEXT_STEPS.md`) |
 | Protecția prețului (cerere de rambursare dacă prețul scade în 14 zile) | **În lucru**: există doar schema din baza de date |
 | Cupoane automate | Neînceput |
 
-Pagina „Broker automat” și comutatorul „Cumpără automat” din panou sunt rămase din prima versiune și urmează să fie înlocuite cu alertele în aplicație. **Cumpărarea efectivă nu este implementată.**
+**Arbitra nu cumpără în locul tău.** Cumpărarea automată din prima versiune a fost scoasă din interfață: setezi un preț țintă, iar aplicația te anunță printr-o notificare când prețul ajunge la el sau scade sub el, în oricare dintre magazine. Decizia de cumpărare rămâne a ta. În API au rămas deocamdată procedurile `broker.setTarget`, `clearTarget` și `listTargets`, folosite pentru ținte, plus câmpurile vechi din baza de date.
 
 Costurile de transport din `packages/api/src/lib/store-config.ts` sunt valori orientative. Înlocuiește-le cu tarifele reale înainte de a le prezenta ca fiind exacte. Prețurile pe care le vezi vin din date demonstrative (seed) și de la utilizatorii care folosesc extensia; **serverul nu face scraping** al magazinelor.
 
@@ -67,13 +70,21 @@ bun run dev
 
 ### Cont demo
 
-`bun run db:seed --yes` creează utilizatorul demo, 27 de produse (9 articole în cele 3 magazine), aproximativ 90 de zile de istoric de prețuri, un coș cu ținte și două comenzi. Emailul și parola demo sunt definite în [`apps/server/src/scripts/seed.ts`](apps/server/src/scripts/seed.ts) (`DEMO_EMAIL`, `DEMO_PASSWORD`) și sunt doar pentru testare locală.
+`bun run db:seed --yes` creează utilizatorul demo (`demo@arbitra.test`), 27 de produse (9 articole în cele 3 magazine), aproximativ 90 de zile de istoric de prețuri, un coș cu ținte și două comenzi. Emailul și parola demo sunt definite în [`apps/server/src/scripts/seed.ts`](apps/server/src/scripts/seed.ts) (`DEMO_EMAIL`, `DEMO_PASSWORD`) și sunt doar pentru testare locală.
 
 Scriptul afișează ce bază de date folosește (doar hostname-ul) și nu scrie nimic fără `--yes`. Ca să ștergi exact datele demo:
 
 ```bash
 bun run db:seed:reset --yes --no-seed
 ```
+
+### Mod demo: notificarea live
+
+Conectează-te cu contul demo, deschide **Panou → Alerte de preț** și folosește cardul „Mod demo”: alegi un produs demo urmărit și apeși „Simulează scăderea prețului”. Prețul scade cu 10 lei sub țintă, iar în cel mult 15 secunde apar notificarea în clopoțel și un toast. Cardul există doar când aplicația rulează cu `bun run dev`; `bun run db:seed --yes` readuce prețurile demo la valorile inițiale.
+
+### Rețele care blochează portul bazei de date
+
+Unele rețele (Wi-Fi de la evenimente, rețele de firmă) blochează portul Postgres 5432. Pentru o bază Neon, aplicația se conectează prin WebSocket pe portul 443, deci merge și acolo (vezi `packages/db/src/index.ts`). `bun run db:push` folosește însă portul 5432: rulează-l de pe o rețea care îl permite, de exemplu hotspot-ul telefonului.
 
 ### Extensia de browser
 
@@ -106,7 +117,7 @@ apps/
   web/        Next.js: pagina de pornire, căutare publică, pagina de produs, autentificare, panou
   server/     Hono: /trpc, /api/auth, limitare de cereri, scriptul de seed
 packages/
-  api/        Routere tRPC (catalog, product, cart, broker), potrivirea produselor, optimizarea coșului
+  api/        Routere tRPC (catalog, product, cart, alerts, demo, broker), potrivirea produselor, optimizarea coșului
   auth/       Configurarea Better Auth
   db/         Schema Drizzle (produse, istoric de prețuri, coș, comenzi) și relațiile
   ui/         Componente shadcn partajate și tokenii de design
@@ -130,7 +141,8 @@ Fiecare aplicație își declară variabilele în `.env.schema`, iar Varlock le 
 
 Lista completă și pașii de continuare sunt în [`docs/NEXT_STEPS.md`](docs/NEXT_STEPS.md). Pe scurt:
 
-- Notificările în aplicație și protecția prețului nu sunt gata; brokerul din prima versiune urmează să fie scos.
+- Protecția prețului nu e gata; routerul `broker` și coloanele de cumpărare automată din baza de date sunt încă în cod, deși interfața nu le mai folosește.
+- Notificările sunt calculate la cerere (fără tabel propriu), iar starea „citit” se păstrează în browser, nu în cont.
 - Mai sunt de adăugat: o limită la mărimea corpului cererilor, mesaje de eroare generice către client și configurația de hosting.
 - Prețurile colectate de utilizatori pot fi false; sunt necesare reputația contributorilor și coroborarea între utilizatori.
 - `bun run check` (Ultracite/Biome) raportează erori de formatare, pentru că `biome.json` cere tab-uri, iar tot codul folosește 2 spații.

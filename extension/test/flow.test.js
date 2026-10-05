@@ -381,7 +381,7 @@ describe("căi de eroare", () => {
 
     expectObserveContract(response);
     expect(response).toMatchObject({ ok: false, state: "error", ingested: null, item: null });
-    expect(response.error).toBe("Nu mă pot conecta la serverul PretPilot.");
+    expect(response.error).toBe("Nu mă pot conecta la serverul Arbitra.");
     expect(calls).toHaveLength(1);
   });
 

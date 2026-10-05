@@ -107,7 +107,7 @@
         try {
           return extractor.extractObservation(document, location.href);
         } catch (error) {
-          console.warn("PretPilot: nu am putut extrage produsul din pagină", error);
+          console.warn("Arbitra: nu am putut extrage produsul din pagină", error);
           return null;
         }
       },

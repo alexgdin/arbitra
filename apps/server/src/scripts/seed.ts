@@ -1,4 +1,4 @@
-// Seed de date demo pentru PretPilot: produse în 3 magazine, istoric de prețuri,
+// Seed de date demo pentru Arbitra: produse în 3 magazine, istoric de prețuri,
 // utilizator demo cu coș, setări Auto-Broker și două comenzi pentru Price Protection.
 //
 // ATENȚIE: DEMO_EMAIL și DEMO_PASSWORD sunt credențiale demo-only, pentru testare locală.
@@ -28,10 +28,10 @@ import { eq, inArray, like, sql } from "drizzle-orm";
 import { ENV } from "../env.server";
 import { auth, db } from "../services";
 
-export const DEMO_EMAIL = "demo@pretpilot.test";
-export const DEMO_PASSWORD = "PretPilot-Demo-2026";
+export const DEMO_EMAIL = "demo@arbitra.test";
+export const DEMO_PASSWORD = "Arbitra-Demo-2026";
 
-const DEMO_NAME = "Demo PretPilot";
+const DEMO_NAME = "Demo Arbitra";
 const DEMO_PREFIX = "demo-";
 
 const DAY_MS = 86_400_000;
@@ -283,7 +283,7 @@ const ORDERS: OrderSpec[] = [
 const PROTECTION_DAYS = 14;
 
 const SHIPPING_ADDRESS: ShippingAddress = {
-  name: "Demo PretPilot",
+  name: "Demo Arbitra",
   phone: "0721 000 123",
   street: "Str. Exemplului nr. 12, bl. B2, sc. 1, ap. 15",
   city: "Cluj-Napoca",

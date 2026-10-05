@@ -1,10 +1,10 @@
-# PretPilot: context complet al proiectului (document de predare)
+# Arbitra: context complet al proiectului (document de predare)
 
 Scopul acestui fișier: să poți continua proiectul cu alt asistent AI, alt cont sau după o pauză lungă, fără să pierzi nimic din ce s-a stabilit și descoperit. Nu conține secrete. Starea descrisă este cea de la commit-ul `d27637c` (branch `main`).
 
 ## 0. Prompt de pornire (copiază-l într-o conversație nouă)
 
-> Lucrezi pe proiectul PretPilot, un monorepo Bun + Turborepo (Next.js 16, Hono, tRPC, Drizzle 1.0 RC, Better Auth, Postgres pe Neon). Citește întâi `docs/PROJECT_CONTEXT.md` și `README.md`. Răspunde-mi în română. Înainte să afirmi că ceva funcționează, verifică (typecheck, teste, rulare). Nu face push, nu șterge date și nu scrie în baza de date fără acordul meu explicit. Comite doar când ți-o cer. Nu pune secrete în git. Versiunile bibliotecilor sunt foarte noi, deci citește documentația din `node_modules` înainte să scrii cod pentru Next.js sau Drizzle (secțiunea 8 enumeră capcanele deja descoperite).
+> Lucrezi pe proiectul Arbitra, un monorepo Bun + Turborepo (Next.js 16, Hono, tRPC, Drizzle 1.0 RC, Better Auth, Postgres pe Neon). Citește întâi `docs/PROJECT_CONTEXT.md` și `README.md`. Răspunde-mi în română. Înainte să afirmi că ceva funcționează, verifică (typecheck, teste, rulare). Nu face push, nu șterge date și nu scrie în baza de date fără acordul meu explicit. Comite doar când ți-o cer. Nu pune secrete în git. Versiunile bibliotecilor sunt foarte noi, deci citește documentația din `node_modules` înainte să scrii cod pentru Next.js sau Drizzle (secțiunea 8 enumeră capcanele deja descoperite).
 
 ## 1. Ce este proiectul
 
@@ -16,18 +16,18 @@ Platformă de cumpărături inteligente pentru România (eMAG, PC Garage, Altex)
 4. **Cart Optimization:** împarte coșul între magazine ca totalul, cu transport, să fie minim.
 5. **Price Protection:** cerere de rambursare dacă prețul scade în 14 zile după cumpărare.
 
-Numele de lucru este **PretPilot**, definit într-un singur loc: `apps/web/src/lib/brand.ts`. Dacă se schimbă, se schimbă acolo și în texte.
+Numele de lucru este **Arbitra**, definit într-un singur loc: `apps/web/src/lib/brand.ts`. Dacă se schimbă, se schimbă acolo și în texte.
 
 ### Planul inițial pe pași și starea lui
 
-| Pas | Conținut | Stare |
-| --- | --- | --- |
-| 1 | Baza de date și schema Drizzle (users cu setări broker, products, price_history, cart_items, orders) | **Gata**, aplicată pe Neon |
-| 2 | Routere tRPC: product, broker, cart | **Gata** |
-| 3 | Cart Optimization Engine | **Gata** (17 teste) |
-| 3 | Price Protection Broker (compară prețul curent cu comenzile din ultimele 14 zile) | **Neînceput** |
-| 4 | Frontend: dashboard, PriceChart, CartOptimizer, BrokerSettings, landing, login | **Gata** |
-| 5 | Extensie de browser Manifest V3 (content script care extrage prețul de pe eMAG/PC Garage și îl trimite la API, background script cu cupoane) | **Neînceput** |
+| Pas | Conținut                                                                                                                                     | Stare                      |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| 1   | Baza de date și schema Drizzle (users cu setări broker, products, price_history, cart_items, orders)                                         | **Gata**, aplicată pe Neon |
+| 2   | Routere tRPC: product, broker, cart                                                                                                          | **Gata**                   |
+| 3   | Cart Optimization Engine                                                                                                                     | **Gata** (17 teste)        |
+| 3   | Price Protection Broker (compară prețul curent cu comenzile din ultimele 14 zile)                                                            | **Neînceput**              |
+| 4   | Frontend: dashboard, PriceChart, CartOptimizer, BrokerSettings, landing, login                                                               | **Gata**                   |
+| 5   | Extensie de browser Manifest V3 (content script care extrage prețul de pe eMAG/PC Garage și îl trimite la API, background script cu cupoane) | **Neînceput**              |
 
 Lipsește și **procesul care execută brokerul automat** (urmărește prețurile și plasează comenzile). Interfața lui există, execuția nu.
 
@@ -54,11 +54,11 @@ Sumele sunt **numere întregi în bani** (129,99 RON = `12999`) peste tot (baza 
 
 ## 4. API (packages/api, routere montate în `routers/index.ts`)
 
-| Router | Proceduri |
-| --- | --- |
-| `product` | `ingestPrice` (protejat; upsert + istoric doar dacă prețul s-a schimbat), `getById`, `list`, `history` (public) |
-| `broker` | `getSettings`, `updateSettings`, `setTarget`, `clearTarget`, `listTargets` (toate protejate) |
-| `cart` | `list`, `add`, `updateQuantity`, `remove`, `clear`, `optimize` (toate protejate; `optimize` este **query**, nu mutation) |
+| Router    | Proceduri                                                                                                                |
+| --------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `product` | `ingestPrice` (protejat; upsert + istoric doar dacă prețul s-a schimbat), `getById`, `list`, `history` (public)          |
+| `broker`  | `getSettings`, `updateSettings`, `setTarget`, `clearTarget`, `listTargets` (toate protejate)                             |
+| `cart`    | `list`, `add`, `updateQuantity`, `remove`, `clear`, `optimize` (toate protejate; `optimize` este **query**, nu mutation) |
 
 `protectedProcedure` cere sesiune (`UNAUTHORIZED` altfel). `getSettings` nu returnează tokenul metodei de plată, doar `hasPaymentMethod`. URL-urile din `ingestPrice` acceptă doar `http` și `https`. Schemele zod comune sunt în `packages/api/src/schemas.ts` (`bani`, `httpUrl`).
 

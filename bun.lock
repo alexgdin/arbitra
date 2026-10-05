@@ -109,6 +109,7 @@
     "packages/db": {
       "name": "@my-better-t-app/db",
       "dependencies": {
+        "@neondatabase/serverless": "^1.2.0",
         "drizzle-orm": "catalog:",
         "pg": "^8.23.0",
         "zod": "catalog:",
@@ -431,6 +432,8 @@
     "@my-better-t-app/db": ["@my-better-t-app/db@workspace:packages/db"],
 
     "@my-better-t-app/ui": ["@my-better-t-app/ui@workspace:packages/ui"],
+
+    "@neondatabase/serverless": ["@neondatabase/serverless@1.2.0", "", {}, "sha512-tnaqgixUengZQNd9ZrS3ytQfamJzLKY8QxgqWQTNHHtB+KrFQWk77JTbbpg4RD+J3qE4eO2lVytvGDX5Kj6FdQ=="],
 
     "@next/env": ["@varlock/nextjs-integration@1.2.2", "", { "peerDependencies": { "next": ">=14", "varlock": "^1.18.0" } }, "sha512-livl9GPwLT/bz3FiYDbXjdgOkQAjwlUN8f/PBaik5BjBUtCZ+xpjFpuVDfO/aFNqqQsVaaoDJQxy/dzVMAFJOw=="],
 

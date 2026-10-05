@@ -6,6 +6,7 @@ import type { CartItem } from "@/components/cart/types";
 import { StatCard } from "@/components/stat-card";
 import { formatBani } from "@/lib/format";
 
+import { ENTER } from "./enter-animation";
 import { isTargetReached } from "./watchlist";
 
 const GRID_CLASSES = "grid grid-cols-2 gap-3 xl:grid-cols-4";
@@ -28,6 +29,14 @@ function summarize(items: readonly CartItem[]) {
   }
   return { reached, cartValue, savings, currency: items[0]?.currency ?? "RON" };
 }
+
+/** The four stat cards enter one after another. */
+const STAT_DELAYS = [
+  undefined,
+  "motion-safe:[--tw-animation-delay:75ms]",
+  "motion-safe:[--tw-animation-delay:150ms]",
+  "motion-safe:[--tw-animation-delay:225ms]",
+] as const;
 
 export function OverviewStats({
   items,
@@ -55,6 +64,7 @@ export function OverviewStats({
         value={items.length}
         hint="în lista ta"
         icon={<Eye />}
+        className={ENTER}
       />
       <StatCard
         label="Ținte atinse"
@@ -62,13 +72,14 @@ export function OverviewStats({
         hint="gata de cumpărat"
         icon={<Target />}
         tone="success"
+        className={cn(ENTER, STAT_DELAYS[1])}
       />
       <StatCard
         label="Valoarea coșului"
         value={formatBani(cartValue, currency)}
         hint="la prețurile de azi"
         icon={<ShoppingCart />}
-        className={WIDE_CARD_CLASSES}
+        className={cn(WIDE_CARD_CLASSES, ENTER, STAT_DELAYS[2])}
       />
       <StatCard
         label="Economie până la țintă"
@@ -76,7 +87,7 @@ export function OverviewStats({
         hint="dacă toate ating ținta"
         icon={<PiggyBank />}
         tone="warning"
-        className={WIDE_CARD_CLASSES}
+        className={cn(WIDE_CARD_CLASSES, ENTER, STAT_DELAYS[3])}
       />
     </div>
   );

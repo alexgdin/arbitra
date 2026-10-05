@@ -1,4 +1,4 @@
-// API-ul PretPilot simulat: un `fetch` fals care răspunde per procedură tRPC, fără rețea.
+// API-ul Arbitra simulat: un `fetch` fals care răspunde per procedură tRPC, fără rețea.
 
 /** @param {unknown} body @param {number} [status] @param {Record<string, string>} [headers] */
 export function json(body, status = 200, headers = {}) {

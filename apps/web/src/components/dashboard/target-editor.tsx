@@ -3,10 +3,8 @@
 import { Button } from "@my-better-t-app/ui/components/button";
 import { Input } from "@my-better-t-app/ui/components/input";
 import { Label } from "@my-better-t-app/ui/components/label";
-import { Switch } from "@my-better-t-app/ui/components/switch";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Info, LoaderCircle, Trash2 } from "lucide-react";
-import Link from "next/link";
 import { useId, useState } from "react";
 import { toast } from "sonner";
 
@@ -31,18 +29,17 @@ function Hint({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * Target price and auto-buy switch for one watched product. Give it a `key` that includes the
- * saved target so the inputs reset to what the server stored.
+ * Target price for one watched product: the app alerts the user when the price reaches it or
+ * goes below. Give it a `key` that includes the saved target so the input resets to what the
+ * server stored.
  */
 export function TargetEditor({ item }: { item: CartItem }) {
   const fieldId = useId();
   const [price, setPrice] = useState(
     item.targetPrice === null ? "" : baniToLeiInput(item.targetPrice),
   );
-  const [autoBuy, setAutoBuy] = useState(item.autoBuyEnabled);
   const [error, setError] = useState<string | null>(null);
 
-  const settings = useQuery(trpc.broker.getSettings.queryOptions());
   const saveTarget = useMutation(
     trpc.broker.setTarget.mutationOptions({
       onSuccess: async () => {
@@ -66,7 +63,6 @@ export function TargetEditor({ item }: { item: CartItem }) {
   const targetBani = parseLeiToBani(price);
   const alreadyBelow =
     targetBani !== null && item.currentPrice !== null && item.currentPrice <= targetBani;
-  const brokerOff = autoBuy && settings.data?.enabled === false;
   const inputId = `${fieldId}-price`;
   const describedBy = `${fieldId}-${error ? "error" : "hint"}`;
 
@@ -79,7 +75,7 @@ export function TargetEditor({ item }: { item: CartItem }) {
     saveTarget.mutate({
       productId: item.productId,
       targetPrice: targetBani,
-      autoBuyEnabled: autoBuy,
+      autoBuyEnabled: false,
     });
   }
 
@@ -115,7 +111,7 @@ export function TargetEditor({ item }: { item: CartItem }) {
           </p>
         ) : (
           <p id={`${fieldId}-hint`} className="text-muted-foreground text-xs">
-            Prețul pe bucată la care vrei să cumperi
+            Te anunțăm în aplicație când prețul ajunge la această sumă sau scade sub ea
             {item.currentPrice === null
               ? "."
               : `; acum este ${formatBani(item.currentPrice, item.currency)}.`}
@@ -123,33 +119,11 @@ export function TargetEditor({ item }: { item: CartItem }) {
         )}
       </div>
 
-      <div className="flex items-center justify-between gap-4 rounded-lg border px-3 py-3">
-        <Label htmlFor={`${fieldId}-auto`} className="flex-col items-start gap-0.5">
-          <span>Cumpără automat</span>
-          <span className="font-normal text-muted-foreground text-xs">
-            Brokerul comandă produsul când prețul ajunge la țintă.
-          </span>
-        </Label>
-        <Switch id={`${fieldId}-auto`} checked={autoBuy} onCheckedChange={setAutoBuy} />
-      </div>
-
       <div aria-live="polite" className="space-y-2 empty:hidden">
         {alreadyBelow ? (
           <Hint>
-            Prețul curent este deja sub această țintă
-            {autoBuy ? "; dacă brokerul e pornit, poate cumpăra imediat." : "."}
-          </Hint>
-        ) : null}
-        {brokerOff ? (
-          <Hint>
-            Brokerul automat este oprit, așa că nu va cumpăra nimic până nu îl pornești.{" "}
-            <Link
-              href="/dashboard/broker"
-              className="font-medium text-foreground underline underline-offset-4"
-            >
-              Deschide setările brokerului
-            </Link>
-            .
+            Prețul curent este deja la nivelul acestei ținte sau sub ea, așa că o vei vedea marcată
+            „Țintă atinsă”.
           </Hint>
         ) : null}
       </div>

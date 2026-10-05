@@ -1,47 +1,11 @@
 "use client";
 
 import { Button } from "@my-better-t-app/ui/components/button";
-import { Switch } from "@my-better-t-app/ui/components/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@my-better-t-app/ui/components/tooltip";
 import { Trash2 } from "lucide-react";
-import { toast } from "sonner";
 
 import type { BrokerTarget } from "./types";
-import { useClearTarget, useSetTarget } from "./use-broker-mutations";
-
-/** Turns automatic buying on or off for one product, keeping its target price and quantity. */
-export function AutoBuySwitch({ target }: { target: BrokerTarget }) {
-  const setTarget = useSetTarget();
-  const checked = setTarget.isPending
-    ? Boolean(setTarget.variables?.autoBuyEnabled)
-    : target.autoBuyEnabled;
-
-  return (
-    <Switch
-      checked={checked}
-      disabled={setTarget.isPending}
-      aria-label={`Cumpărare automată pentru ${target.title}`}
-      onCheckedChange={(next) =>
-        setTarget.mutate(
-          {
-            productId: target.productId,
-            targetPrice: target.targetPrice,
-            quantity: target.quantity,
-            autoBuyEnabled: next,
-          },
-          {
-            onSuccess: () =>
-              toast.success(
-                next
-                  ? "Cumpărarea automată a fost activată pentru acest produs."
-                  : "Cumpărarea automată a fost oprită pentru acest produs.",
-              ),
-          },
-        )
-      }
-    />
-  );
-}
+import { useClearTarget } from "./use-broker-mutations";
 
 const DESTRUCTIVE_GHOST = "text-destructive hover:bg-destructive/10 hover:text-destructive";
 

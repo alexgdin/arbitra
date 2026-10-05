@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 const TABS = [
   { href: "/dashboard", label: "Prezentare" },
   { href: "/dashboard/cart", label: "Coș și optimizare" },
-  { href: "/dashboard/broker", label: "Broker automat" },
+  { href: "/dashboard/broker", label: "Alerte de preț" },
 ] as const;
 
 function isActive(pathname: string, href: string): boolean {

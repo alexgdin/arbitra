@@ -575,7 +575,7 @@ describe("pretpilot:test-connection", () => {
 
     const response = await testConnection("http://localhost:3000/");
 
-    expect(response).toEqual({ ok: true, message: "Conexiunea cu serverul PretPilot funcționează." });
+    expect(response).toEqual({ ok: true, message: "Conexiunea cu serverul Arbitra funcționează." });
     expect(calls[0].url).toBe(`${API}/trpc/healthCheck`);
   });
 
@@ -592,7 +592,7 @@ describe("pretpilot:test-connection", () => {
   test("server căzut", async () => {
     mockApi({});
 
-    expect(await testConnection(API)).toEqual({ ok: false, message: "Nu mă pot conecta la serverul PretPilot." });
+    expect(await testConnection(API)).toEqual({ ok: false, message: "Nu mă pot conecta la serverul Arbitra." });
   });
 
   test("server căzut pe o adresă fără permisiune: indiciu despre permisiune", async () => {

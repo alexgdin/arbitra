@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
 
-import { BrokerSettings } from "@/components/broker/broker-settings";
+import { PriceAlerts } from "@/components/broker/price-alerts";
+import { ENTER } from "@/components/dashboard/enter-animation";
+import { DemoDropCard } from "@/components/notifications/demo-drop-card";
 import { PageHeader } from "@/components/page-header";
 
 export const metadata: Metadata = {
-  title: "Broker automat",
+  title: "Alerte de preț",
 };
 
-export default function BrokerPage() {
+export default function PriceAlertsPage() {
   return (
     <>
       <PageHeader
-        title="Broker automat"
-        description="Setezi prețul dorit pentru un produs, iar brokerul îl cumpără în locul tău când ajunge la el, în limitele alese de tine."
+        className={ENTER}
+        title="Alerte de preț"
+        description="Setezi prețul țintă pentru un produs, iar noi te anunțăm în aplicație când prețul ajunge la el sau scade sub el."
       />
-      <BrokerSettings />
+      <PriceAlerts />
+      <DemoDropCard className="mt-6" />
     </>
   );
 }

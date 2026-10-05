@@ -17,7 +17,7 @@ const STORE_MATCHES = [
 describe("manifest.json", () => {
   test("identitate și versiune minimă", () => {
     expect(manifest.manifest_version).toBe(3);
-    expect(manifest.name).toBe("PretPilot");
+    expect(manifest.name).toBe("Arbitra");
     expect(manifest.version).toBe("0.1.0");
     expect(manifest.minimum_chrome_version).toBe("110");
     expect(manifest.description.length).toBeGreaterThan(0);
@@ -60,7 +60,7 @@ describe("manifest.json", () => {
 
     expect(manifest.action).toEqual({
       default_popup: "popup.html",
-      default_title: "PretPilot",
+      default_title: "Arbitra",
       default_icon: icons,
     });
     expect(manifest.options_ui).toEqual({ page: "options.html", open_in_tab: true });

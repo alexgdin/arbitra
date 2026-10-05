@@ -239,7 +239,7 @@ async function handleTestConnection(message) {
   }
   try {
     await healthCheck(apiBase);
-    return { ok: true, message: "Conexiunea cu serverul PretPilot funcționează." };
+    return { ok: true, message: "Conexiunea cu serverul Arbitra funcționează." };
   } catch (error) {
     return { ok: false, message: await connectionFailureMessage(apiBase, error) };
   }
@@ -312,7 +312,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   handler.run(message, sender).then(sendResponse, (error) => {
-    console.warn("PretPilot: eroare la procesarea mesajului", type, error);
+    console.warn("Arbitra: eroare la procesarea mesajului", type, error);
     sendResponse(handler.fallback(message, error));
   });
   return true;

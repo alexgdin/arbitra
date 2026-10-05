@@ -26,7 +26,7 @@ function parseBaseUrl(raw, fallback) {
   try {
     url = new URL(text);
   } catch {
-    return { error: "Adresa nu este validă. Exemplu: https://pretpilot.ro" };
+    return { error: "Adresa nu este validă. Exemplu: https://arbitra.ro" };
   }
   if (url.protocol !== "http:" && url.protocol !== "https:") {
     return { error: "Adresa trebuie să înceapă cu http:// sau https://." };

@@ -1,4 +1,4 @@
-# Extensia PretPilot (Chrome)
+# Extensia Arbitra (Chrome)
 
 Extensie Manifest V3, în JavaScript simplu: fără build, fără dependențe npm, fără framework. Folderul `extension/` nu face parte din workspace-urile Bun ale monorepo-ului; se încarcă în Chrome direct din sursă.
 
@@ -7,7 +7,7 @@ Extensie Manifest V3, în JavaScript simplu: fără build, fără dependențe np
 Pe pagina unui produs de pe **eMAG**, **PC Garage** sau **Altex**, extensia:
 
 1. **Citește produsul și prețul** din datele structurate ale paginii (JSON-LD `Product`), cu textul prețului din pagină ca rezervă.
-2. **Trimite prețul la API-ul PretPilot**, doar dacă ești conectat în PretPilot. Așa istoricul de prețuri se actualizează din contribuțiile utilizatorilor (preț „crowdsourced”).
+2. **Trimite prețul la API-ul Arbitra**, doar dacă ești conectat în Arbitra. Așa istoricul de prețuri se actualizează din contribuțiile utilizatorilor (preț „crowdsourced”).
 3. **Caută același produs în celelalte magazine** și afișează în colțul din dreapta-jos un panou discret, „Același produs în alte magazine”: prețul din fiecare magazin, diferența față de pagina curentă și un link. Comparația este publică și funcționează și fără cont; doar utilizatorii conectați contribuie cu prețuri.
 
 Pictograma extensiei arată pe insignă câte oferte mai ieftine există în alte magazine. Fereastra extensiei (click pe pictogramă) arată starea conexiunii, un comutator pornit/oprit și ultimele 5 prețuri citite.
@@ -22,7 +22,7 @@ Extensia rulează **doar** pe cele trei magazine (`emag.ro`, `pcgarage.ro`, `alt
 | --- | --- | --- |
 | `product.ingestPrice` | doar conectat, doar dacă prețul s-a schimbat sau au trecut peste 6 ore de la ultima trimitere | magazinul, codul produsului din magazin, titlul, adresa paginii (fără parametri și fără `#`), imaginea, EAN-ul (doar dacă este un GTIN valid), codul de model normalizat (vezi „Limitări cunoscute”), prețul în bani, moneda, dacă produsul este în stoc |
 | `catalog.lookup` | la fiecare pagină de produs, conectat sau nu | doar magazinul și codul produsului din magazin |
-| `GET /api/auth/get-session` | când deschizi fereastra extensiei | nimic în afara cookie-ului tău de sesiune PretPilot |
+| `GET /api/auth/get-session` | când deschizi fereastra extensiei | nimic în afara cookie-ului tău de sesiune Arbitra |
 
 Ce **nu** face extensia:
 
@@ -32,7 +32,7 @@ Ce **nu** face extensia:
 - nu încarcă și nu execută cod de pe alte adrese;
 - cu comutatorul oprit, nu face nicio cerere.
 
-Cererile către API trimit cookie-ul de sesiune PretPilot (`credentials: "include"`), ca serverul să știe cine contribuie. Textele din pagini și din API ajung în pagină doar prin `textContent`, iar linkurile se deschid doar dacă sunt `http` sau `https`, cu `rel="noopener noreferrer"`.
+Cererile către API trimit cookie-ul de sesiune Arbitra (`credentials: "include"`), ca serverul să știe cine contribuie. Textele din pagini și din API ajung în pagină doar prin `textContent`, iar linkurile se deschid doar dacă sunt `http` sau `https`, cu `rel="noopener noreferrer"`.
 
 Local, în `chrome.storage.local`, extensia păstrează: setările (`settings`), ultima trimitere a fiecărui produs (`seen:<magazin>:<cod>`, pentru fereastra de 6 ore), ultimele 5 produse citite (`recent`), momentul ultimei curățări (`seenPrunedAt`) și, doar după un răspuns 429, până când nu mai trimite cereri (`backoffUntil`).
 
@@ -69,7 +69,7 @@ Cerințe: Chrome 110 sau mai nou.
 2. Pornește **Modul dezvoltator** (Developer mode), din colțul din dreapta-sus.
 3. Apasă **Încarcă extensie necompilată** (Load unpacked).
 4. Alege folderul `extension` din acest repo (cel care conține `manifest.json`).
-5. Fixează pictograma PretPilot în bara de unelte (meniul cu piesa de puzzle), ca să vezi insigna.
+5. Fixează pictograma Arbitra în bara de unelte (meniul cu piesa de puzzle), ca să vezi insigna.
 
 După ce modifici codul, apasă butonul de reîncărcare de pe cardul extensiei din `chrome://extensions`, apoi reîncarcă pagina magazinului. Erorile service worker-ului se văd cu linkul **service worker** de pe același card (Inspect views).
 
@@ -79,7 +79,7 @@ Fereastra extensiei, apoi **Setări** (sau click dreapta pe pictogramă, apoi *O
 
 | Câmp | Implicit | Rol |
 | --- | --- | --- |
-| Adresa API | `http://localhost:3000` | serverul PretPilot (Hono + tRPC) care primește prețurile |
+| Adresa API | `http://localhost:3000` | serverul Arbitra (Hono + tRPC) care primește prețurile |
 | Adresa aplicației web | `http://localhost:3001` | pentru linkurile „Conectează-te”, „Caută produse” și „Panou” |
 
 - Dacă schimbi adresa API, Chrome îți cere acordul ca extensia să comunice cu acel server (permisiune opțională). Fără acord, adresa nu se salvează.
@@ -108,7 +108,7 @@ Nu cer instalare de pachete și nu folosesc rețeaua: `chrome` și `fetch` sunt 
 
 1. Din rădăcina repo-ului, pornește aplicația: `bun run dev` (API pe 3000, web pe 3001), cu baza de date configurată și datele demo încărcate (`bun run db:seed --yes`).
 2. Încarcă extensia (secțiunea de mai sus) și conectează-te pe `http://localhost:3001/login` (contul demo este în `apps/server/src/scripts/seed.ts`).
-3. Deschide o pagină de produs, de exemplu un SSD pe eMAG. După 1-2 secunde apare butonul **PretPilot** în colțul din dreapta-jos; apasă-l ca să vezi panoul.
+3. Deschide o pagină de produs, de exemplu un SSD pe eMAG. După 1-2 secunde apare butonul **Arbitra** în colțul din dreapta-jos; apasă-l ca să vezi panoul.
 4. Deschide fereastra extensiei: trebuie să arate „Conectat ca …”, iar produsul să apară la „Ultimele prețuri citite” cu eticheta „preț nou”.
 5. Deschide același produs pe alt magazin (de exemplu pe Altex). Panoul trebuie să arate prețul de la eMAG, diferența și un link, iar insigna să numere ofertele mai ieftine.
 6. Caută produsul pe `http://localhost:3001/cauta`: trebuie să apară cu ambele magazine.

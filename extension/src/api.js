@@ -1,4 +1,4 @@
-// Client HTTP pentru API-ul PretPilot (tRPC 11 fără transformer), folosit de service worker.
+// Client HTTP pentru API-ul Arbitra (tRPC 11 fără transformer), folosit de service worker.
 // Funcțiile primesc opțional un `fetch` injectat, ca să poată fi testate fără rețea.
 
 /** @typedef {"UNAUTHORIZED" | "RATE_LIMITED" | "NETWORK" | "TIMEOUT" | "BAD_RESPONSE" | "SERVER"} ApiErrorCode */
@@ -233,7 +233,7 @@ export async function getSession(apiBase, options = {}) {
 }
 
 /**
- * Verifică dacă serverul PretPilot răspunde (procedura publică healthCheck).
+ * Verifică dacă serverul Arbitra răspunde (procedura publică healthCheck).
  * @param {string} apiBase
  * @param {RequestOptions} [options]
  * @returns {Promise<true>}
@@ -241,7 +241,7 @@ export async function getSession(apiBase, options = {}) {
 export async function healthCheck(apiBase, options = {}) {
   const data = await trpcQuery(apiBase, "healthCheck", undefined, options);
   if (data !== "OK") {
-    throw new ApiError("BAD_RESPONSE", "Serverul nu este un server PretPilot.");
+    throw new ApiError("BAD_RESPONSE", "Serverul nu este un server Arbitra.");
   }
   return true;
 }

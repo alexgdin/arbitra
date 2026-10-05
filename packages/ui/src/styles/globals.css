@@ -199,3 +199,136 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/*
+ * Landing motion (Arbitra). Only transform/opacity animate in loops; every looping animation
+ * is paired with `motion-reduce:animate-none` at the call site, and the global reduced-motion
+ * rule above collapses the rest to their final frame.
+ */
+@utility arbitra-stage {
+  background-color: oklch(0.13 0.02 262);
+  color-scheme: dark;
+}
+
+@keyframes arbitra-grid-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-48px, -48px, 0);
+  }
+}
+
+@keyframes arbitra-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, -3%, 0) scale(1.08);
+  }
+}
+
+@keyframes arbitra-fall {
+  from {
+    transform: translate3d(0, -12rem, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(0, 100svh, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes arbitra-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes arbitra-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes arbitra-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes arbitra-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes arbitra-char-in {
+  from {
+    opacity: 0.15;
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes arbitra-scroll-cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  45% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  55% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+@keyframes arbitra-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}

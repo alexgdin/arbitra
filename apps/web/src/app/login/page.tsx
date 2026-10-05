@@ -1,4 +1,4 @@
-import { Bot, ChartLine, type LucideIcon, ShieldCheck } from "lucide-react";
+import { BellRing, ChartLine, type LucideIcon, Scale } from "lucide-react";
 import type { Metadata } from "next";
 
 import { BRAND } from "@/lib/brand";
@@ -16,14 +16,14 @@ const PERKS: readonly { icon: LucideIcon; title: string; description: string }[]
     description: "Vezi cum a evoluat prețul și afli dacă oferta chiar merită.",
   },
   {
-    icon: Bot,
-    title: "Broker automat",
-    description: "Cumpărăm pentru tine când produsul ajunge la prețul tău.",
+    icon: BellRing,
+    title: "Alerte de preț",
+    description: "Te anunțăm în aplicație când prețul ajunge la ținta ta sau scade sub ea.",
   },
   {
-    icon: ShieldCheck,
-    title: "Protecția prețului",
-    description: "Poți cere rambursarea diferenței dacă prețul scade în 14 zile.",
+    icon: Scale,
+    title: "Același produs, trei magazine",
+    description: "Compari oferta din eMAG, PC Garage și Altex și vezi imediat unde e mai ieftin.",
   },
 ];
 

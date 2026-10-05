@@ -430,7 +430,7 @@ describe("healthCheck", () => {
     expect(calls[0].url).toBe(`${BASE}/trpc/healthCheck`);
   });
 
-  test("un alt răspuns înseamnă că nu este un server PretPilot", async () => {
+  test("un alt răspuns înseamnă că nu este un server Arbitra", async () => {
     const { fetch } = mockFetch(() => json({ result: { data: "altceva" } }));
 
     expect((await rejection(healthCheck(BASE, { fetch }))).code).toBe("BAD_RESPONSE");

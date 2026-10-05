@@ -6,7 +6,7 @@ const LINKS = [
   { href: "/", label: "Prezentare" },
   { href: "/dashboard", label: "Panou" },
   { href: "/dashboard/cart", label: "Coș și optimizare" },
-  { href: "/dashboard/broker", label: "Broker automat" },
+  { href: "/dashboard/broker", label: "Alerte de preț" },
 ] as const;
 
 export default function Footer() {
@@ -16,8 +16,8 @@ export default function Footer() {
         <div className="max-w-sm space-y-2">
           <p className="font-semibold text-base tracking-tight">{BRAND.name}</p>
           <p className="text-pretty text-muted-foreground text-sm">
-            {BRAND.tagline} Urmărim prețurile din eMAG, PC Garage și Altex, ca tu să cumperi exact
-            când merită.
+            {BRAND.tagline} Comparăm prețurile din eMAG, PC Garage și Altex și te anunțăm în
+            aplicație când prețul ajunge la ținta ta.
           </p>
         </div>
         <nav aria-label="Linkuri utile">
