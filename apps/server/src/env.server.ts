@@ -14,7 +14,8 @@ const DeployedEnvSchema = z.object({
 type ServerEnv = z.infer<typeof DeployedEnvSchema>;
 
 async function loadEnv(): Promise<Readonly<ServerEnv>> {
-  if (process.env.VERCEL) {
+  // VERCEL e setat de platformă; DATABASE_URL deja în mediu înseamnă că altcineva (Vercel, `varlock run`) a injectat valorile.
+  if (process.env.VERCEL || process.env.DATABASE_URL) {
     return DeployedEnvSchema.parse(process.env);
   }
   await import("varlock/auto-load");

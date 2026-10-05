@@ -9,6 +9,8 @@ Arbitra se publică în **două proiecte Vercel** din același repo GitHub:
 
 Browserul vorbește **doar cu domeniul site-ului**: `apps/web/next.config.ts` trimite `/trpc/*` și `/api/auth/*` către API prin rewrites (când `API_ORIGIN` e setat). Așa cookie-urile de autentificare sunt first-party, iar login-ul merge și în Safari/iOS și în verificarea sesiunii din `/dashboard`. Fără rewrites, cu site-ul și API-ul pe două domenii `*.vercel.app`, login-ul nu ar funcționa.
 
+Pe Vercel funcțiile rulează cu Node, nu cu Bun. De aceea API-ul se compilează întâi cu tsdown (`bun run build` → `apps/server/dist/index.mjs`), iar Vercel pornește `apps/server/server.mjs`, care reexportă acel fișier. Codul serverului nu trebuie să importe module care cer Bun (de exemplu `hono/bun`).
+
 Ambele proiecte au `vercel.json`: instalarea se face cu Bun 1.4.2 prin `npx --yes bun@1.4.2 install` (aceeași versiune care a scris `bun.lock`), iar funcțiile rulează în `fra1` (Frankfurt), lângă baza Neon.
 
 ## 1. Proiectul API (primul)
