@@ -7,7 +7,16 @@ import type { NextConfig } from "next";
 // /trpc și /api/auth prin rewrites, ca browserul să vorbească doar cu domeniul site-ului: cookie-urile
 // de autentificare rămân first-party (merg și în Safari). Local, fără API_ORIGIN, clientul cheamă direct
 // NEXT_PUBLIC_SERVER_URL.
-const apiOrigin = process.env.API_ORIGIN?.replace(/\/$/, "");
+// Acceptă și domeniul scris fără schemă („arbitra-api.vercel.app”): rewrites cer o adresă completă.
+function normalizeOrigin(value: string | undefined): string | undefined {
+  const origin = value?.trim().replace(/\/+$/, "");
+  if (!origin) {
+    return undefined;
+  }
+  return /^https?:\/\//.test(origin) ? origin : `https://${origin}`;
+}
+
+const apiOrigin = normalizeOrigin(process.env.API_ORIGIN);
 
 const nextConfig: NextConfig = {
   typedRoutes: true,
