@@ -23,7 +23,7 @@ const EXTERNAL_LINKS = [
   { href: "https://www.emag.ro/", label: "eMAG" },
   { href: "https://www.pcgarage.ro/", label: "PC Garage" },
   { href: "https://altex.ro/", label: "Altex" },
-  { href: "https://github.com/alexgdin/pricepilot", label: "Codul sursă pe GitHub" },
+  { href: "https://github.com/alexgdin/arbitra", label: "Codul sursă pe GitHub" },
 ] as const;
 
 function FooterHeading({ id, children }: { id: string; children: React.ReactNode }) {
