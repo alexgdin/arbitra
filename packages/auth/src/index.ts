@@ -13,6 +13,7 @@ export function createAuth(
   env: AuthConfig,
   database: Database,
   desktopOrigins: readonly string[] = [],
+  maintenanceActive = false,
 ) {
   return betterAuth({
     database: drizzleAdapter(database, {
@@ -20,7 +21,10 @@ export function createAuth(
       schema,
     }),
     trustedOrigins: [env.CORS_ORIGIN, ...desktopOrigins],
-    emailAndPassword: { enabled: true },
+   emailAndPassword: {
+  enabled: true,
+  disableSignUp: maintenanceActive,
+},
     secret: env.BETTER_AUTH_SECRET,
     baseURL: env.BETTER_AUTH_URL,
     advanced: {
@@ -33,6 +37,7 @@ export function createAuth(
 
     user: {
   additionalFields: {
+    role: { type: "string", required: false, defaultValue: 'user', input: false },
     brokerEnabled: { type: "boolean", required: false, defaultValue: false, input: false },
     brokerMaxOrderValue: { type: "number", required: false, input: false },
     brokerMonthlyBudget: { type: "number", required: false, input: false },

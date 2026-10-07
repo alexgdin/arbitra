@@ -34,9 +34,21 @@ export const t = initTRPC.context<Context>().create({
 
 export const router = t.router;
 
-export const publicProcedure = t.procedure;
+const maintenanceActive = true;
 
-export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+export const baseProcedure = t.procedure.use(({ ctx, next }) => {
+  if (ctx.session?.user.role !== "admin" && maintenanceActive) {
+    throw new TRPCError({
+      code: "SERVICE_UNAVAILABLE",
+      message: "Site-ul este în mentenanță. Încearcă din nou mai târziu.",
+    });
+  }
+  return next();
+});
+
+export const publicProcedure = baseProcedure;
+
+export const protectedProcedure = baseProcedure.use(({ ctx, next }) => {
   if (!ctx.session) {
     throw new TRPCError({
       code: "UNAUTHORIZED",

@@ -23,6 +23,7 @@ export const user = pgTable("user", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 
+  role: text("role").notNull().default("user"), // user, admin, broker
   brokerEnabled: boolean("broker_enabled").notNull().default(false),
   brokerMaxOrderValue: integer("broker_max_order_value"), // plafon/comandă, în bani
   brokerMonthlyBudget: integer("broker_monthly_budget"), // buget lunar, în bani

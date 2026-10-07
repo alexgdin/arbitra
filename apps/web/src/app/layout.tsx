@@ -7,6 +7,8 @@ import Footer from "@/components/footer";
 import Header from "@/components/header";
 import Providers from "@/components/providers";
 import { BRAND } from "@/lib/brand";
+import MaintenanceScreen from "@/components/mainenancte-screen";
+import { IntroLoader } from "@/components/motion/intro-loader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,20 +42,8 @@ export default function RootLayout({
     >
       <body className="antialiased">
         <Providers>
-          <div className="flex min-h-svh flex-col">
-            <a
-              href="#main"
-              className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2.5 focus:font-medium focus:text-primary-foreground focus:text-sm focus:shadow-lg"
-            >
-              Sari la conținut
-            </a>
-            <Header />
-            <main id="main" className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </div>
-          <CookieConsent />
+          <IntroLoader />
+          {children}
         </Providers>
       </body>
     </html>
