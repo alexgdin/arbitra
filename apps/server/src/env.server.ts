@@ -5,6 +5,7 @@ import { z } from "zod";
 // reguli ca în apps/server/.env.schema. Local și în teste rămâne varlock (.env.schema + .env).
 const DeployedEnvSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("production"),
+  MAINTENANCE_MODE: z.enum(["true", "false"]).default("false").transform((value) => value === "true"),
   BETTER_AUTH_SECRET: z.string().min(32),
   BETTER_AUTH_URL: z.url(),
   CORS_ORIGIN: z.url(),

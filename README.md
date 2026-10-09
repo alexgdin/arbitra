@@ -139,6 +139,12 @@ docs/         PROJECT_CONTEXT.md (context tehnic), NEXT_STEPS.md (ce a rămas ș
 
 Fiecare aplicație își declară variabilele în `.env.schema`, iar Varlock le validează la pornire și generează `src/env.ts` la `bun install`. Fișierele `.env` sunt ignorate de git; versionezi doar schemele și fișierele `.env.example`. După ce schimbi o schemă, rulează `bun run env:generate`.
 
+### Mentenanță
+
+`MAINTENANCE_MODE` trebuie să aibă aceeași valoare pe site și pe server (vezi `.env.example` din fiecare aplicație). Implicit este `false`: căutarea publică și funcțiile contului sunt disponibile. Cu `true`, vizitatorii și utilizatorii obișnuiți văd ecranul de mentenanță, iar API-ul le refuză cererile cu `SERVICE_UNAVAILABLE`. Administratorii conectați (`role = "admin"`) păstrează accesul. Pagina `/login` rămâne accesibilă pentru conectare, dar înregistrările noi sunt dezactivate.
+
+Local, după schimbarea setării, repornește `bun run dev`. Pe Vercel, setează aceeași valoare în ambele proiecte și publică din nou ambele aplicații. Setarea nu creează administratori și nu modifică datele din baza de date.
+
 ## Limitări cunoscute
 
 Lista completă și pașii de continuare sunt în [`docs/NEXT_STEPS.md`](docs/NEXT_STEPS.md). Pe scurt:

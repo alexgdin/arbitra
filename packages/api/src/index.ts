@@ -34,9 +34,9 @@ export const t = initTRPC.context<Context>().create({
 
 export const router = t.router;
 
-const maintenanceActive = true;
-
 export const baseProcedure = t.procedure.use(({ ctx, next }) => {
+  // Aceeași setare ca în site și autentificare; implicit aplicația funcționează normal.
+  const maintenanceActive = process.env.MAINTENANCE_MODE === "true";
   if (ctx.session?.user.role !== "admin" && maintenanceActive) {
     throw new TRPCError({
       code: "SERVICE_UNAVAILABLE",
