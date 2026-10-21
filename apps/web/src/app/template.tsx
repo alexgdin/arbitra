@@ -7,7 +7,7 @@ import MaintenanceScreen from "@/components/mainenancte-screen";
 import { RouteTransition } from "@/components/motion/route-transition";
 import { authClient } from "@/lib/auth-client";
 
-const maintenanceActive = process.env.MAINTENANCE_MODE === "false" ? false : true;
+const maintenanceActive = process.env.MAINTENANCE_MODE === "true";
 
 export default async function Template({
   children,
