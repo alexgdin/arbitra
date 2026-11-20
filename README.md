@@ -4,7 +4,7 @@
 
 **Același produs. Prețul cel mai mic.**
 
-Arbitra compară prețurile aceluiași produs între magazinele online din România (eMAG, PC Garage, Altex), îți arată istoricul lor și cât de proaspăt e fiecare preț, te ajută să-ți împarți coșul între magazine ca să plătești cât mai puțin (transportul inclus) și îți permite să stabilești un preț țintă, ca să vezi în aplicație când prețul ajunge la el sau scade sub el. **Nu ai nevoie de cont ca să cauți și să compari prețuri.**
+Arbitra compară prețurile aceluiași produs între magazinele online din România, îți arată istoricul lor și cât de proaspăt e fiecare preț, te ajută să-ți împarți coșul între magazine ca să plătești cât mai puțin (transportul inclus) și îți permite să stabilești un preț țintă, ca să vezi în aplicație când prețul ajunge la el sau scade sub el. **Nu ai nevoie de cont ca să cauți și să compari prețuri.**
 
 Proiect făcut pentru un hackathon de 24 de ore. Este un prototip: unele părți sunt complete, altele sunt doar începute (vezi mai jos).
 
@@ -42,33 +42,9 @@ Monorepo Bun + Turborepo, generat cu [Better-T-Stack](https://github.com/AmanVar
 - **Extensie:** Chrome Manifest V3, JavaScript simplu, fără build și fără dependențe
 - **Mediu:** [Varlock](https://varlock.dev) pentru schema și validarea variabilelor de mediu
 
-## Pornire rapidă
+## Acces
 
-Ai nevoie de [Bun](https://bun.sh) 1.4+, Node.js 20.9+ (cerut de Next.js) și o bază de date PostgreSQL. Cel mai simplu e un proiect gratuit pe [Neon](https://neon.tech).
-
-```bash
-bun install
-```
-
-Creează fișierele de mediu pornind de la exemple și completează `DATABASE_URL` (și un `BETTER_AUTH_SECRET` propriu, vezi comentariul din fișier):
-
-```bash
-cp apps/server/.env.example apps/server/.env
-cp apps/web/.env.example apps/web/.env
-```
-
-În `cmd.exe` folosește `copy apps\server\.env.example apps\server\.env` și `copy apps\web\.env.example apps\web\.env`.
-
-Creează tabelele, încarcă date demonstrative și pornește aplicația:
-
-```bash
-bun run db:push
-bun run db:seed --yes
-bun run dev
-```
-
-- Aplicația web: <http://localhost:3001>
-- API: <http://localhost:3000>
+#### https://www.arbitra.ro
 
 ### Cont demo
 
